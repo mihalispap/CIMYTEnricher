@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/apache-commons.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/commons-io-2.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jaxb-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jaxb-impl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jaxb-impl-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jaxb-xjc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jaxb-xjc-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jersey-json-1.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jettison-1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/org.eclipse.persistence.moxy-2.5.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
