@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.agroknow.cimmyt.parser.CimmytRecord;
 
 public class CimmytWriter 
@@ -25,7 +27,7 @@ public class CimmytWriter
 	{
 
 		PrintWriter writer = new PrintWriter(folder+File.separator+record.getApiid()+".object.xml", "UTF-8");
-		writer.println("<object>\n\t");
+		writer.println("<object>");
 
 
 		List<CimmytRecord.Title> titles=new ArrayList<CimmytRecord.Title>();
@@ -41,30 +43,39 @@ public class CimmytWriter
 		writer.println("\t<type>"+type+"</type>");
 		
 		titles=record.getTitle();
+		List<String> langs=new ArrayList<String>();
+		List<String> lexvos=new ArrayList<String>();
+		langs=record.getLanguage();
+		lexvos=record.getLexvo();
+		
 
 		for(int i=0;i<titles.size();i++)
 		{
 			writer.println("\t<title>");
 				writer.println("\t\t<value>"+titles.get(i).getValue()+"</value>");
-				writer.println("\t\t<lang>"+titles.get(i).getLang()+"</lang>");
-			writer.println("\t</title>\n");
+				
+				if(titles.get(i).getLang()!=null)
+					writer.println("\t\t<lang>"+titles.get(i).getLang()+"</lang>");
+				else
+				{
+					if(langs.size()==1)
+						writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
+					else
+						writer.println("\t\t<lang/>");
+				}
+			writer.println("\t</title>");
 		}
 
 
-		if(1==1)
-			return;
+		//if(1==1)
+		//	return;
 		
 		String uri=record.getApiid();
-		writer.println("\t<uri>"+uri+"</uri>");
+		writer.println("\t<id>"+uri+"</id>");
+		writer.println("\t<uri>/cimmyt/"+type+"/"+uri+"</uri>");
+		//if(1==1)
+		//	return;
 		
-		if(1==1)
-			return;
-		
-		List<String> langs=new ArrayList<String>();
-		List<String> lexvos=new ArrayList<String>();
-		
-		langs=record.getLanguage();
-		lexvos=record.getLexvo();
 		
 		for(int i=0;i<langs.size();i++)
 		{
@@ -74,8 +85,59 @@ public class CimmytWriter
 			writer.println("\t</language>");
 		}
 		
+		List<XMLGregorianCalendar> created=record.getDate();
+		for(int i=0;i<created.size();i++)
+		{
+			String date=created.get(i).toString();
+			writer.println("\t<created>"+date+"</created>");
+		}
+		
+		XMLGregorianCalendar updated=record.getUpdatedDate();
+		writer.println("\t<updated>"+updated+"</updated>");
+		
+		writer.println("\t<shownBy>");
+
+			writer.println("\t\t<handler>"+handler+"</handler>");
+			
+			writer.println("\t\t<sets>");
+				List<String> sets=record.getCset();
+				List<String> setsid=record.getSetid();
+				
+				for(int i=0;i<sets.size();i++)
+				{
+					writer.println("\t\t\t<set>");
+					
+						writer.println("\t\t\t\t<value>"+sets.get(i)+"</value>");
+						writer.println("\t\t\t\t<id>"+setsid.get(i)+"</id>");
+						writer.println("\t\t\t\t<type>collection</type>");
+						writer.println("\t\t\t\t<uri>/cimmyt/collection/"+setsid.get(i)+"</uri>");
+					
+					writer.println("\t\t\t</set>");
+				}
+			
+			writer.println("\t\t</sets>");
+		
+		writer.println("\t</shownBy>");
+
+		List<String> domainid=record.getDomainid();
+		
+		for(int i=0;i<domainid.size();i++)
+		{
+			writer.println("\t<cimmytDomainId>"+domainid.get(i)+"</cimmytDomainId>");
+		}
+
+		List<String> docid=record.getCdocid();
+		
+		for(int i=0;i<docid.size();i++)
+		{
+			writer.println("\t<cimmytDocId>"+docid.get(i)+"</cimmytDocId>");
+		}
+		
 		writer.println("</object>");
 		writer.close();
+
+		record.getListOfFields();
+		
 	}
 	
 }
