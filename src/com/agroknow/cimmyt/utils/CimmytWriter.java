@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.agroknow.cimmyt.parser.CimmytRecord;
+import com.agroknow.cimmyt.parser.CimmytRecordInterface;
 
 public class CimmytWriter 
 {
@@ -17,7 +18,7 @@ public class CimmytWriter
 	{
 		//System.out.println(record.getSubject().toString());
 		
-		
+		//CimmytRecord record=new C
 		writeObject(record,folder);
 		
 		 

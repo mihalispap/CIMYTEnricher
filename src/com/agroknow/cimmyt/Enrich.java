@@ -16,6 +16,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 
 import com.agroknow.cimmyt.parser.CimmytRecord;
+import com.agroknow.cimmyt.parser.CimmytRecordInterface;
 import com.agroknow.cimmyt.utils.CimmytWriter;
 
 public class Enrich {
@@ -99,12 +100,9 @@ public class Enrich {
 	    						unmarshaller.unmarshal(new File(listOfFiles[i].getAbsolutePath()));
 	    			
 	    			System.out.println(listOfFiles[i].getAbsolutePath());
-	    			CimmytRecord crec = record.getValue();
+	    			CimmytRecord crec = (CimmytRecord) record.getValue();
 	    			
 	    			System.out.println(crec.toString());
-
-
-
 	    			
 	    		} catch (JAXBException e) {
 	    			// TODO Auto-generated catch block
@@ -140,7 +138,7 @@ public class Enrich {
 				
 				fhElement = (JAXBElement<?>)u.unmarshal(new FileInputStream(listOfFiles[0].getAbsolutePath()));
 
-		        CimmytRecord record = (CimmytRecord)fhElement.getValue();
+				CimmytRecord record = (CimmytRecord) fhElement.getValue();
 		        System.out.println(record.getApiid());
 		        
 		        CimmytEnrich enricher=new CimmytEnrich();

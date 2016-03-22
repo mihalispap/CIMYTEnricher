@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.agroknow.cimmyt.parser.CimmytRecord;
+import com.agroknow.cimmyt.parser.CimmytRecordInterface;
 
 public class CimmytEnrich 
 {
