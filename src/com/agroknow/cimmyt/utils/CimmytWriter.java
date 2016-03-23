@@ -49,24 +49,24 @@ public class CimmytWriter
 		langs=record.getLanguage();
 		lexvos=record.getLexvo();
 		
-
+		writer.println("\t<titles>");
 		for(int i=0;i<titles.size();i++)
 		{
-			writer.println("\t<title>");
-				writer.println("\t\t<value>"+titles.get(i).getValue()+"</value>");
+			writer.println("\t\t<title>");
+				writer.println("\t\t\t<value>"+titles.get(i).getValue()+"</value>");
 				
 				if(titles.get(i).getLang()!=null)
-					writer.println("\t\t<lang>"+titles.get(i).getLang()+"</lang>");
+					writer.println("\t\t\t<lang>"+titles.get(i).getLang()+"</lang>");
 				else
 				{
 					if(langs.size()==1)
-						writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
+						writer.println("\t\t\t<lang>"+langs.get(i)+"</lang>");
 					else
-						writer.println("\t\t<lang/>");
+						writer.println("\t\t\t<lang/>");
 				}
-			writer.println("\t</title>");
+			writer.println("\t\t</title>");
 		}
-
+		writer.println("\t</titles>");
 
 		//if(1==1)
 		//	return;

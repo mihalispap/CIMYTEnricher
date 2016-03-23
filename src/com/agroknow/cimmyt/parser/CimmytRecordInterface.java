@@ -8,14 +8,6 @@ import java.util.List;
 public class CimmytRecordInterface extends CimmytRecord
 {
 
-    public List<String> getLinkToResource() {
-        if (linkToResource == null) {
-            linkToResource = new ArrayList<String>();
-        }
-        return this.linkToResource;
-    }
-
-
     public void addResourceLink(String link)
     {
     	if (linkToResource == null) {
