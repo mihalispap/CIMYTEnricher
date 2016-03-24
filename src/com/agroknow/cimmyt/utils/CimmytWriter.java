@@ -117,6 +117,7 @@ public class CimmytWriter
 		XMLGregorianCalendar updated=record.getUpdatedDate();
 		writer.println("\t<updated>"+updated+"</updated>");
 		
+		/*
 		writer.println("\t<about>");
 
 			writer.println("\t\t<handler>"+handler+"</handler>");
@@ -154,7 +155,7 @@ public class CimmytWriter
 			}
 		
 		writer.println("\t</about>");
-
+		*/
 		
 		
 		writer.println("</object>");
