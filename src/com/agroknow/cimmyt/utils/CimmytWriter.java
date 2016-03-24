@@ -68,6 +68,27 @@ public class CimmytWriter
 		}
 		writer.println("\t</titles>");
 
+		List<CimmytRecord.Description> descrs=new ArrayList<CimmytRecord.Description>();
+		descrs=record.getDescription();
+		writer.println("\t<descriptions>");
+		for(int i=0;i<descrs.size();i++)
+		{
+			writer.println("\t\t<description>");
+				writer.println("\t\t\t<value>"+descrs.get(i).getValue()+"</value>");
+				
+				if(titles.get(i).getLang()!=null)
+					writer.println("\t\t\t<lang>"+descrs.get(i).getLang()+"</lang>");
+				else
+				{
+					if(langs.size()==1)
+						writer.println("\t\t\t<lang>"+langs.get(i)+"</lang>");
+					else
+						writer.println("\t\t\t<lang/>");
+				}
+			writer.println("\t\t</description>");
+		}
+		writer.println("\t</descriptions>");
+
 		//if(1==1)
 		//	return;
 		
@@ -96,7 +117,7 @@ public class CimmytWriter
 		XMLGregorianCalendar updated=record.getUpdatedDate();
 		writer.println("\t<updated>"+updated+"</updated>");
 		
-		writer.println("\t<shownBy>");
+		writer.println("\t<about>");
 
 			writer.println("\t\t<handler>"+handler+"</handler>");
 			
@@ -117,22 +138,24 @@ public class CimmytWriter
 				}
 			
 			writer.println("\t\t</sets>");
-		
-		writer.println("\t</shownBy>");
+			
+			List<String> domainid=record.getDomainid();
+			
+			for(int i=0;i<domainid.size();i++)
+			{
+				writer.println("\t\t<cimmytDomainId>"+domainid.get(i)+"</cimmytDomainId>");
+			}
 
-		List<String> domainid=record.getDomainid();
+			List<String> docid=record.getCdocid();
+			
+			for(int i=0;i<docid.size();i++)
+			{
+				writer.println("\t\t<cimmytDocId>"+docid.get(i)+"</cimmytDocId>");
+			}
 		
-		for(int i=0;i<domainid.size();i++)
-		{
-			writer.println("\t<cimmytDomainId>"+domainid.get(i)+"</cimmytDomainId>");
-		}
+		writer.println("\t</about>");
 
-		List<String> docid=record.getCdocid();
 		
-		for(int i=0;i<docid.size();i++)
-		{
-			writer.println("\t<cimmytDocId>"+docid.get(i)+"</cimmytDocId>");
-		}
 		
 		writer.println("</object>");
 		writer.close();

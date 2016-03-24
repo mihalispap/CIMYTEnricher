@@ -95,6 +95,7 @@ public class CimmytEnrich
         			if(name.equals("ref"))
         				record.addResourceLink(value);
         			
+        			/*TODO: perhaps on everything?*/
         			if(value.endsWith(".pdf"))
         			{
         				System.out.println("In here..");
