@@ -1,11 +1,14 @@
 package com.agroknow.cimmyt;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -44,6 +47,27 @@ public class CimmytEnrich
 			this.enrichDSpace(record);
 		else if(record.getHandler().contains("data.cimmyt"))
 			this.enrichDVN(record);
+		
+		String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
+				+ "input="+URLEncoder.encode(record.getDescription().get(0).getValue(),"UTF-8")+"&informat=text&outformat=json-ld&source-lang=en&target-lang=en&domain=TaaS-1001";
+		
+		URL url = new URL(uri);
+		//logger.info("Calling FREME e-terminology: "+uri);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
+		
+		BufferedReader streamReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8")); 
+		StringBuilder responseStrBuilder = new StringBuilder();
+		String inputStr;
+		while ((inputStr = streamReader.readLine()) != null)
+		    responseStrBuilder.append(inputStr);
+		
+	    int responseCode = connection.getResponseCode();
+	    
+	    System.out.println(responseStrBuilder);
+	    
+		
 	}
 
 	void enrichDVN(CimmytRecord record)
@@ -59,7 +83,10 @@ public class CimmytEnrich
 		 * 
 		 * */
 		
-		String url="http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier=oai:repository.cimmyt.org:10883/538&metadataPrefix=didl";
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier=oai:repository.cimmyt.org:"+domain_id+"/"+doc_id+"&metadataPrefix=didl";
 		
 		
 		

@@ -49,45 +49,45 @@ public class CimmytWriter
 		langs=record.getLanguage();
 		lexvos=record.getLexvo();
 		
-		writer.println("\t<titles>");
+		//writer.println("\t<titles>");
 		for(int i=0;i<titles.size();i++)
 		{
-			writer.println("\t\t<title>");
-				writer.println("\t\t\t<value>"+titles.get(i).getValue()+"</value>");
+			writer.println("\t<title>");
+				writer.println("\t\t<value>"+titles.get(i).getValue()+"</value>");
 				
 				if(titles.get(i).getLang()!=null)
-					writer.println("\t\t\t<lang>"+titles.get(i).getLang()+"</lang>");
+					writer.println("\t\t<lang>"+titles.get(i).getLang()+"</lang>");
 				else
 				{
 					if(langs.size()==1)
-						writer.println("\t\t\t<lang>"+langs.get(i)+"</lang>");
+						writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
 					else
-						writer.println("\t\t\t<lang/>");
+						writer.println("\t\t<lang/>");
 				}
-			writer.println("\t\t</title>");
+			writer.println("\t</title>");
 		}
-		writer.println("\t</titles>");
+		//writer.println("\t</titles>");
 
 		List<CimmytRecord.Description> descrs=new ArrayList<CimmytRecord.Description>();
 		descrs=record.getDescription();
-		writer.println("\t<descriptions>");
+		//writer.println("\t<descriptions>");
 		for(int i=0;i<descrs.size();i++)
 		{
-			writer.println("\t\t<description>");
-				writer.println("\t\t\t<value>"+descrs.get(i).getValue()+"</value>");
+			writer.println("\t<description>");
+				writer.println("\t\t<value>"+descrs.get(i).getValue()+"</value>");
 				
 				if(titles.get(i).getLang()!=null)
-					writer.println("\t\t\t<lang>"+descrs.get(i).getLang()+"</lang>");
+					writer.println("\t\t<lang>"+descrs.get(i).getLang()+"</lang>");
 				else
 				{
 					if(langs.size()==1)
-						writer.println("\t\t\t<lang>"+langs.get(i)+"</lang>");
+						writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
 					else
-						writer.println("\t\t\t<lang/>");
+						writer.println("\t\t<lang/>");
 				}
-			writer.println("\t\t</description>");
+			writer.println("\t</description>");
 		}
-		writer.println("\t</descriptions>");
+		//writer.println("\t</descriptions>");
 
 		//if(1==1)
 		//	return;
@@ -97,6 +97,19 @@ public class CimmytWriter
 		writer.println("\t<uri>/cimmyt/"+type+"/"+uri+"</uri>");
 		//if(1==1)
 		//	return;
+		
+		List<CimmytRecord.Subject> subjects=new ArrayList<CimmytRecord.Subject>();
+
+		for(int i=0;i<subjects.size();i++)
+		{
+			writer.println("\t<subject>");
+				writer.println("\t\t<value>"+subjects.get(i).getValue()+"</value>");
+				writer.println("\t\t<uri>"+subjects.get(i).getUri()+"</uri>");
+				writer.println("\t\t<vocabulary>"+subjects.get(i).getVocabulary()+"</uri>");
+			writer.println("\t</subject>");
+		}
+		
+		
 		
 		
 		for(int i=0;i<langs.size();i++)
