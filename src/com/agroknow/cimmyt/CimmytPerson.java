@@ -17,5 +17,7 @@ public class CimmytPerson
 	public String last_name;
 	
 	public String orcid;
+	
+	public String url;
 
 }

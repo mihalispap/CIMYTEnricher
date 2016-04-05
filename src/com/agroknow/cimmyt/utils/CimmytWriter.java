@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,8 @@ public class CimmytWriter
 		
 		//CimmytRecord record=new C
 		writeObject(record,folder);
-		writePersons(record,folder);
+		writeResource(record,folder);
+		//writePersons(record,folder);
 		 
 	}
 	
@@ -180,6 +183,318 @@ public class CimmytWriter
 
 	}
 	
+	protected static void writeResource(CimmytRecord record, String folder) throws FileNotFoundException, UnsupportedEncodingException
+	{
+		PrintWriter writer = new PrintWriter(folder+File.separator+record.getApiid()+".resource.xml", "UTF-8");
+		writer.println("<resource>");
+		
+			List<String> types=new ArrayList<String>();
+			types=record.getType();
+		
+			for(int i=0;i<types.size();i++)
+			{
+				writer.println("\t<type>"+types.get(i)+"</type>");
+			}
+		
+			writer.println("\t<id>"+record.getApiid()+"</id>");
+			writer.println("\t<uri>/cimmyt/resource/"+record.getApiid()+"</uri>");
+			
+			List<String> creators=new ArrayList<String>();
+			creators=record.getCreator();
+			
+			for(int i=0;i<creators.size();i++)
+			{
+				int cid=creators.get(i).hashCode();
+				if(cid<0)
+					cid*=-1;
+				
+				writer.println("\t<creator>");
+					writer.println("\t\t<value>"+creators.get(i)+"</value>");
+					writer.println("\t\t<id>"+cid+"</id>");
+					writer.println("\t\t<uri>/cimmyt/person/"+cid+"</uri>");
+					writer.println("\t\t<type>person</type>");
+				writer.println("\t</creator>");
+			}
+			
+			List<String> contributors=new ArrayList<String>();
+			contributors=record.getContributor();
+			
+			for(int i=0;i<contributors.size();i++)
+			{
+				int cid=contributors.get(i).hashCode();
+				if(cid<0)
+					cid*=-1;
+				
+				/*
+				 * TODO:
+				 * 	validate that they are persons!
+				 * */
+				writer.println("\t<contributor>");
+					writer.println("\t\t<value>"+contributors.get(i)+"</value>");
+					writer.println("\t\t<id>"+cid+"</id>");
+					writer.println("\t\t<uri>/cimmyt/person/"+cid+"</uri>");
+					writer.println("\t\t<type>person</type>");
+				writer.println("\t</contributor>");
+			}
+
+			List<String> publishers=new ArrayList<String>();
+			publishers=record.getPublisher();
+			
+			for(int i=0;i<publishers.size();i++)
+			{
+				int cid=publishers.get(i).hashCode();
+				if(cid<0)
+					cid*=-1;
+				
+				writer.println("\t<publisher>");
+					writer.println("\t\t<value>"+publishers.get(i)+"</value>");
+					writer.println("\t\t<id>"+cid+"</id>");
+					writer.println("\t\t<uri>/cimmyt/organization/"+cid+"</uri>");
+					writer.println("\t\t<type>organization</type>");
+				writer.println("\t</publisher>");
+			}
+
+			List<XMLGregorianCalendar> dates=new ArrayList<XMLGregorianCalendar>();
+			dates=record.getPubDate();
+			
+			for(int i=0;i<dates.size();i++)
+			{
+				writer.println("\t<date>"+dates.get(i)+"</date>");
+			}
+			
+			dates=new ArrayList<XMLGregorianCalendar>();
+			dates=record.getDate();
+			
+			for(int i=0;i<dates.size();i++)
+			{
+				writer.println("\t<updatedDate>"+dates.get(i)+"</updatedDate>");
+			}
+
+			List<String> issns=new ArrayList<String>();
+			issns=record.getIssn();
+			
+			for(int i=0;i<issns.size();i++)
+			{
+				writer.println("\t<issn>"+issns.get(i)+"</issn>");
+			}
+
+			List<String> isbns=new ArrayList<String>();
+			isbns=record.getIsbn();
+			
+			for(int i=0;i<isbns.size();i++)
+			{
+				writer.println("\t<isbn>"+isbns.get(i)+"</isbn>");
+			}
+			
+			List<String> urls=new ArrayList<String>();
+			urls=record.getUrl();
+			
+			for(int i=0;i<urls.size();i++)
+			{
+				boolean broken=exists(urls.get(i));
+				writer.println("\t<url>");
+					writer.println("\t\t<value>"+urls.get(i)+"</value>");
+					writer.println("\t\t<broken>"+broken+"</id>");
+				writer.println("\t</url>");
+			}
+
+			writer.println("\t<url>");
+				writer.println("\t\t<value>http://repository.cimmyt.org/xmlui/handle/"+record.getDomainid().get(0)+
+						"/"+record.getCdocid().get(0)+"</value>");
+				writer.println("\t\t<broken>false</id>");
+			writer.println("\t</url>");
+			
+			List<String> locations=new ArrayList<String>();
+			locations=record.getLocation();
+			List<String> geonames=new ArrayList<String>();
+			geonames=record.getGeonames();
+			
+			for(int i=0;i<locations.size();i++)
+			{
+				writer.println("\t<location>");
+					writer.println("\t\t<value>"+locations.get(i)+"</value>");
+					try
+					{
+						writer.println("\t\t<uri>"+geonames.get(i)+"</uri>");
+						writer.println("\t\t<vocabulary>geonames</vocabulary>");
+						
+						/*
+						 * TODO:
+						 * 	really parse file...
+						 * */
+						writer.println("\t\t<uri>http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
+								locations.get(i)+"</uri>");
+						writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
+					}
+					catch (IndexOutOfBoundsException e) {
+						
+					}
+				writer.println("\t</location>");
+			}
+
+			List<String> regions=new ArrayList<String>();
+			regions=record.getRegion();
+			
+			for(int i=0;i<regions.size();i++)
+			{
+				writer.println("\t<region>"+regions.get(i)+"</region>");
+			}
+
+			List<String> places=new ArrayList<String>();
+			places=record.getPlace();
+			
+			for(int i=0;i<places.size();i++)
+			{
+				writer.println("\t<place>"+places.get(i)+"</place>");
+			}
+
+			List<String> pages=new ArrayList<String>();
+			pages=record.getPages();
+			
+			for(int i=0;i<pages.size();i++)
+			{
+				writer.println("\t<page>"+pages.get(i)+"</page>");
+			}
+
+			List<String> series=new ArrayList<String>();
+			series=record.getExtent();
+			
+			for(int i=0;i<series.size();i++)
+			{
+				writer.println("\t<extent>"+series.get(i)+"</extent>");
+			}
+			
+			List<String> relations=new ArrayList<String>();
+			relations=record.getRelation();
+			
+			/*
+			 * TODO:
+			 * 	check if need be for external link
+			 * */
+			for(int i=0;i<relations.size();i++)
+			{
+				writer.println("\t<relation>"+relations.get(i)+"</relation>");
+			}
+
+			List<String> rights=new ArrayList<String>();
+			rights=record.getRights();
+			
+			for(int i=0;i<rights.size();i++)
+			{
+				writer.println("\t<rights>"+rights.get(i)+"</rights>");
+			}
+
+			List<String> citations=new ArrayList<String>();
+			citations=record.getCitation();
+			
+			for(int i=0;i<citations.size();i++)
+			{
+				writer.println("\t<citation>"+citations.get(i)+"</citation>");
+			}
+
+			List<String> dois=new ArrayList<String>();
+			dois=record.getDoi();
+			
+			for(int i=0;i<dois.size();i++)
+			{
+				writer.println("\t<doi>"+dois.get(i)+"</doi>");
+			}
+
+			List<String> formats=new ArrayList<String>();
+			formats=record.getFormat();
+			
+			for(int i=0;i<formats.size();i++)
+			{
+				writer.println("\t<format>"+formats.get(i)+"</format>");
+			}
+
+			List<String> qualities=new ArrayList<String>();
+			qualities=record.getQuality();
+			
+			for(int i=0;i<qualities.size();i++)
+			{
+				writer.println("\t<quality>"+qualities.get(i)+"</quality>");
+			}
+
+			List<String> resource_links=new ArrayList<String>();
+			resource_links=record.getLinkToResource();
+
+			List<String> resource_sizes=new ArrayList<String>();
+			resource_sizes=record.getLinkToResourceSize();
+
+			List<String> resource_types=new ArrayList<String>();
+			resource_types=record.getLinkToResourceType();
+			
+			writer.println("\t<aggregation>");
+				
+				writer.println("\t\t<shownAt>");
+					writer.println("\t\t\t<value>http://repository.cimmyt.org/xmlui/handle/"+record.getDomainid().get(0)+
+						"/"+record.getCdocid().get(0)+"</value>");
+					writer.println("\t\t\t<broken>false</broken>");
+				writer.println("\t\t</shownAt>");
+				
+				for(int i=0;i<resource_links.size();i++)
+				{
+					int k;
+					
+					for(k=0;k<i;k++)
+					{
+						if(resource_links.get(i).equals(resource_links.get(k)))
+							break;
+					}
+					if(k!=i)
+						continue;
+					
+					writer.println("\t\t<shownBy>");
+						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
+						writer.println("\t\t\t<broken>false</broken>");
+					writer.println("\t\t</shownBy>");
+				}
+				
+				for(int i=0;i<resource_links.size();i++)
+				{
+
+					int k;
+					
+					for(k=0;k<i;k++)
+					{
+						if(resource_links.get(i).equals(resource_links.get(k)))
+							break;
+					}
+					if(k!=i)
+						continue;
+					
+					writer.println("\t\t<linkToResource>");
+						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
+						writer.println("\t\t\t<type>"+resource_types.get(i)+"</type>");
+						writer.println("\t\t\t<size>"+resource_sizes.get(i)+"</size>");
+					writer.println("\t\t</linkToResource>");
+				}	
+				
+				
+			writer.println("\t</aggregation>");
+			
+						
+			List<String> collections=new ArrayList<String>();
+			collections=record.getSetid();
+				
+			for(int i=0;i<collections.size();i++)
+			{
+				writer.println("\t<collection>");
+					writer.println("\t\t<id>"+collections.get(i)+"</id>");
+					writer.println("\t\t<uri>/cimmyt/collection/"+collections.get(i)+"</uri>");
+					writer.println("\t\t<type>collection</type>");
+				writer.println("\t</collection>");
+			}
+			
+			
+			
+		writer.println("</resource>");
+		writer.close();
+	}
+	
+	
+	
 	protected static void writePersons(CimmytRecord record, String folder) throws FileNotFoundException, UnsupportedEncodingException
 	{
 		List<String> persons=new ArrayList<String>();
@@ -245,6 +560,23 @@ public class CimmytWriter
 			writer.close();
 		}
 	}
+	
+	
+	public static boolean exists(String URLName){
+	    try {
+	      HttpURLConnection.setFollowRedirects(false);
+	      // note : you may also need
+	      //        HttpURLConnection.setInstanceFollowRedirects(false)
+	      HttpURLConnection con =
+	         (HttpURLConnection) new URL(URLName).openConnection();
+	      con.setRequestMethod("HEAD");
+	      return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+	    }
+	    catch (Exception e) {
+	       e.printStackTrace();
+	       return false;
+	    }
+	  }  
 	
 }
 

@@ -1,6 +1,8 @@
 package com.agroknow.cimmyt;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -93,9 +95,587 @@ public class CimmytEnrich
 		
 	}
 	
-	void enrichGeographical(CimmytRecord record)
+	void enrichGeographical(CimmytRecord record) throws IOException
 	{
+		for(int i=0;i<record.getRegion().size();i++)
+		{
 		
+			List<String> value = new ArrayList<String>();//
+			value=record.getRegion();
+			
+			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+					+ "assets"+System.getProperty("file.separator");
+			
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities5000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"null.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+		}
+
+		if(true)
+			return;
+		
+		for(int i=0;i<record.getPlace().size();i++)
+		{
+		
+			List<String> value = new ArrayList<String>();//
+			value=record.getRegion();
+			
+			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+					+ "assets"+System.getProperty("file.separator");
+			
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities5000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"null.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+		}
+		
+		if(true)
+			return;
+		
+		
+		
+		for(int i=0;i<record.getDescription().size();i++)
+		{
+		
+			String[] value=record.getDescription().get(i).getValue().split(" ");
+			
+			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+					+ "assets"+System.getProperty("file.separator");
+			
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities5000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"null.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+	
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+		}
+		
+		for(int i=0;i<record.getSubject().size();i++)
+		{
+		
+			String[] value=record.getSubject().get(i).getValue().split(" ");
+			
+			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+					+ "assets"+System.getProperty("file.separator");
+			
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities5000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"null.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					System.out.println("Comparing:"+value[j]+" with:"+geonames[1]);
+	
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}
+		}
 	}
 	
 	void enrichDVN(CimmytRecord record)
@@ -175,7 +755,126 @@ public class CimmytEnrich
          * 
          * */
 
+		url="http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier="
+				+ "oai:repository.cimmyt.org:"+domain_id+"/"+doc_id+"&metadataPrefix=xoai";
 		
+		
+		
+		url2 = new URL(url);
+        connection = url2.openConnection();
+
+        doc = parseXML(connection.getInputStream());
+        
+        
+        descNodes = doc.getLastChild().getChildNodes();
+       
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='region']"
+        		+ "/element[@name='focus']/element[@name='en_US']/field[@name='value']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addRegion(nl.item(i).getTextContent());        		
+        	}
+        }
+		
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='series']"
+        		+ "/element[@name='number']/element[@name='en_US']/field[@name='value']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addSeries(nl.item(i).getTextContent());
+        		//System.out.println("asdasdasda:"+record.getExtent().get(0));
+        	}
+        }
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='place']"
+        		+ "/element[@name='en_US']/field[@name='value']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addPlace(nl.item(i).getTextContent());        		
+        	}
+        }
+		
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='pages']"
+        		+ "/element[@name='en_US']/field[@name='value']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addPages(nl.item(i).getTextContent());        		
+        	}
+        }
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='bundles']"
+        		+ "/element[@name='bundle']/element[@name='bitstreams']/element[@name='bitstream']"
+        		+ "/field[@name='format']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addResourceType(nl.item(i).getTextContent());
+        	}
+        }
+        
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='bundles']"
+        		+ "/element[@name='bundle']/element[@name='bitstreams']/element[@name='bitstream']"
+        		+ "/field[@name='url']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addResourceLink(nl.item(i).getTextContent());
+        		System.out.println("added:"+nl.item(i).getTextContent());
+        	}
+        }
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='bundles']"
+        		+ "/element[@name='bundle']/element[@name='bitstreams']/element[@name='bitstream']"
+        		+ "/field[@name='size']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addResourceLinkSize(nl.item(i).getTextContent());
+        	}
+        }
 		
 	}
 	

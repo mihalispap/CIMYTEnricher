@@ -10,6 +10,73 @@ import com.agroknow.cimmyt.CimmytSubject;
 
 public class CimmytRecordInterface extends CimmytRecord
 {
+    public void addGeonames(String geo)
+    {
+    	if (geonames == null) {
+    		geonames = new ArrayList<String>();
+        }
+
+    	int i;
+    	for(i=0;i<geonames.size();i++)
+    	{
+    		if(geonames.get(i).equalsIgnoreCase(geo))
+    			break;
+    	}
+    	
+    	if(i==geonames.size())
+    		geonames.add(geo);
+    }
+
+    public void addLocation(String loc)
+    {
+    	if (location == null) {
+    		location = new ArrayList<String>();
+        }
+    	
+    	int i;
+    	for(i=0;i<location.size();i++)
+    	{
+    		if(location.get(i).equalsIgnoreCase(loc))
+    			break;
+    	}
+    	
+    	if(i==location.size())
+    		location.add(loc);
+    }
+
+
+    public void addSeries(String sr)
+    {
+    	if (extent == null) {
+    		extent = new ArrayList<String>();
+        }
+    	extent.add(sr);
+    }
+
+
+    public void addPages(String pg)
+    {
+    	if (pages == null) {
+    		pages = new ArrayList<String>();
+        }
+    	pages.add(pg);
+    }
+
+    public void addPlace(String pl)
+    {
+    	if (place == null) {
+    		place = new ArrayList<String>();
+        }
+    	place.add(pl);
+    }
+
+    public void addRegion(String reg)
+    {
+    	if (region == null) {
+    		region = new ArrayList<String>();
+        }
+    	region.add(reg);
+    }
 
     public void addResourceLink(String link)
     {
