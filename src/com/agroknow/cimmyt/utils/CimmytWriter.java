@@ -4,11 +4,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.codehaus.jettison.json.JSONException;
+
+import com.agroknow.cimmyt.CimmytPerson;
+import com.agroknow.cimmyt.external.Freme;
 import com.agroknow.cimmyt.parser.CimmytRecord;
 import com.agroknow.cimmyt.parser.CimmytRecordInterface;
 
@@ -20,7 +26,7 @@ public class CimmytWriter
 		
 		//CimmytRecord record=new C
 		writeObject(record,folder);
-		
+		writePersons(record,folder);
 		 
 	}
 	
@@ -167,52 +173,77 @@ public class CimmytWriter
 		XMLGregorianCalendar updated=record.getUpdatedDate();
 		writer.println("\t<updated>"+updated+"</updated>");
 		
-		/*
-		writer.println("\t<about>");
-
-			writer.println("\t\t<handler>"+handler+"</handler>");
-			
-			writer.println("\t\t<sets>");
-				List<String> sets=record.getCset();
-				List<String> setsid=record.getSetid();
-				
-				for(int i=0;i<sets.size();i++)
-				{
-					writer.println("\t\t\t<set>");
-					
-						writer.println("\t\t\t\t<value>"+sets.get(i)+"</value>");
-						writer.println("\t\t\t\t<id>"+setsid.get(i)+"</id>");
-						writer.println("\t\t\t\t<type>collection</type>");
-						writer.println("\t\t\t\t<uri>/cimmyt/collection/"+setsid.get(i)+"</uri>");
-					
-					writer.println("\t\t\t</set>");
-				}
-			
-			writer.println("\t\t</sets>");
-			
-			List<String> domainid=record.getDomainid();
-			
-			for(int i=0;i<domainid.size();i++)
-			{
-				writer.println("\t\t<cimmytDomainId>"+domainid.get(i)+"</cimmytDomainId>");
-			}
-
-			List<String> docid=record.getCdocid();
-			
-			for(int i=0;i<docid.size();i++)
-			{
-				writer.println("\t\t<cimmytDocId>"+docid.get(i)+"</cimmytDocId>");
-			}
-		
-		writer.println("\t</about>");
-		*/
 		
 		
 		writer.println("</object>");
 		writer.close();
 
-		//record.getListOfFields();
-		
+	}
+	
+	protected static void writePersons(CimmytRecord record, String folder) throws FileNotFoundException, UnsupportedEncodingException
+	{
+		List<String> persons=new ArrayList<String>();
+		persons=record.getCreator();
+		for(int i=0;i<persons.size();i++)
+		{
+			int id=persons.get(i).hashCode();
+			if(id<0)
+				id*=-1;
+			
+			CimmytPerson person=new CimmytPerson();
+			person.id=String.valueOf(id);
+			person.uri="/cimmyt/person/"+id;
+			person.name=persons.get(i);
+
+			PrintWriter writer = new PrintWriter(folder+File.separator+id+".object.xml", "UTF-8");
+			
+			writer.println("<object>");
+				writer.println("\t<type>person</type>");
+				
+				writer.println("\t<title>");
+					writer.println("\t\t<value>"+person.name+"</value>");
+					writer.println("\t\t<lang/>");
+				writer.println("\t</title>");
+
+				writer.println("\t<description/>");
+				writer.println("\t<subject/>");
+				
+				writer.println("\t<id>"+person.id+"</id>");
+				writer.println("\t<uri>/cimmyt/person/"+person.id+"</uri>");
+				
+				writer.println("\t<language/>");
+				writer.println("\t<created/>");
+				writer.println("\t<updated/>");
+				
+			writer.println("</object>");
+			writer.close();
+			
+			writer = new PrintWriter(folder+File.separator+id+".person.xml", "UTF-8");
+
+			String[] fn_ln=person.name.split(", ");
+			person.first_name=fn_ln[0];
+			person.last_name=fn_ln[1];
+
+			Freme freme_enricher=new Freme();
+			person.orcid="";
+			try {
+				person.orcid=freme_enricher.enrichPersons(person.first_name+" "+person.last_name);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+			} catch (ProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			writer.println("<person>");
+			
+			writer.println("</person>");
+			writer.close();
+		}
 	}
 	
 }

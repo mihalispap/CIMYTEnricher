@@ -16,6 +16,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.agroknow.cimmyt.CimmytPerson;
 import com.agroknow.cimmyt.CimmytSubject;
 
 public class Freme 
@@ -24,6 +25,9 @@ public class Freme
 	
 	public List<CimmytSubject> enrichSubjects(String value) throws JSONException, UnsupportedEncodingException, MalformedURLException, ProtocolException
 	{
+		if(true)
+			return null;
+		
 		String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"
 						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
@@ -185,6 +189,87 @@ public class Freme
 	    return subjects;
 	}
 	
+	
+	public String enrichPersons(String value) throws JSONException, UnsupportedEncodingException, MalformedURLException, ProtocolException
+	{
+		String dataset="orcid";
+		String uri = "http://api-dev.freme-project.eu/current/e-entity/freme-ner/documents?"
+				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld&language=en&"
+						+ "dataset="+dataset+"&mode=all";
+		
+		
+		/*String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
+				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"
+						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
+		*/
+		List<CimmytPerson> persons=new ArrayList<CimmytPerson>();
+		
+		URL url = new URL(uri);
+		//logger.info("Calling FREME e-terminology: "+uri);
+		HttpURLConnection connection;
+		try {
+			connection = (HttpURLConnection) url.openConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
+		
+		BufferedReader streamReader;
+		try {
+			streamReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		} 
+		StringBuilder responseStrBuilder = new StringBuilder();
+		String inputStr;
+		try {
+			while ((inputStr = streamReader.readLine()) != null)
+			    responseStrBuilder.append(inputStr);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+	    int responseCode;
+		try {
+			responseCode = connection.getResponseCode();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	    
+	    System.out.println(responseStrBuilder);
+	    
+	    switch (responseCode) 
+	    {
+			case 200:
+				JSONObject root = new JSONObject(responseStrBuilder.toString());
+				//JSONArray annotations = root;
+				if ( root !=null ) 
+				{
+					if (root.has("itsrdf:taConfidence"))
+					{
+						double score=Double.valueOf(root.getString("itsrdf:taConfidence"));
+						
+						if(score>=0.6)
+						{
+							String orcid=root.getString("taIdentRef");
+							return orcid;
+						}
+						
+					}
+					
+				}
+	    }
+	    return null;
+	}
 	
 }
 

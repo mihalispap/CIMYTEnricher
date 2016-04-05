@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -84,6 +86,11 @@ public class CimmytEnrich
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		catch (java.lang.NullPointerException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 	
 	void enrichGeographical(CimmytRecord record)
@@ -107,7 +114,8 @@ public class CimmytEnrich
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
-		String url="http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier=oai:repository.cimmyt.org:"+domain_id+"/"+doc_id+"&metadataPrefix=didl";
+		String url="http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier="
+				+ "oai:repository.cimmyt.org:"+domain_id+"/"+doc_id+"&metadataPrefix=didl";
 		
 		
 		
