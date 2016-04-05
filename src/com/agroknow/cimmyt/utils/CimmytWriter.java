@@ -103,10 +103,46 @@ public class CimmytWriter
 		System.out.println(subjects.size());
 		for(int i=0;i<subjects.size();i++)
 		{
+			int k;
+			for(k=0;k<i;k++)
+			{
+				if(subjects.get(i).getValue().equalsIgnoreCase(subjects.get(k).getValue()))
+				{
+					break;
+				}
+			}
+			if(k!=i)
+				continue;
+			
 			writer.println("\t<subject>");
 				writer.println("\t\t<value>"+subjects.get(i).getValue()+"</value>");
-				writer.println("\t\t<uri>"+subjects.get(i).getUri()+"</uri>");
-				writer.println("\t\t<vocabulary>"+subjects.get(i).getVocabulary()+"</uri>");
+				
+				for(int j=i+1;j<subjects.size();j++)
+				{
+					if(subjects.get(i).getValue().equalsIgnoreCase(subjects.get(j).getValue()))
+					{
+						if(!subjects.get(j).getUri().equals(subjects.get(i).getUri()))
+						{
+							writer.println("\t\t<uri>"+subjects.get(j).getUri()+"</uri>");
+							writer.println("\t\t<vocabulary>"+subjects.get(j).getVocabulary()+"</vocabulary>");
+							writer.println("\t\t<score>"+subjects.get(j).getScore()+"</score>");
+						}
+					}
+				}
+				
+				try
+				{
+					if(!subjects.get(i).getUri().equals("null"))
+					{
+						writer.println("\t\t<uri>"+subjects.get(i).getUri()+"</uri>");
+						writer.println("\t\t<vocabulary>"+subjects.get(i).getVocabulary()+"</vocabulary>");
+						writer.println("\t\t<score>"+subjects.get(i).getScore()+"</score>");
+					}
+				}
+				catch(java.lang.NullPointerException e)
+				{
+					
+				}
 			writer.println("\t</subject>");
 		}
 		
@@ -175,7 +211,7 @@ public class CimmytWriter
 		writer.println("</object>");
 		writer.close();
 
-		record.getListOfFields();
+		//record.getListOfFields();
 		
 	}
 	

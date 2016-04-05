@@ -2,8 +2,11 @@ package com.agroknow.cimmyt.parser;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.agroknow.cimmyt.CimmytSubject;
 
 public class CimmytRecordInterface extends CimmytRecord
 {
@@ -30,6 +33,21 @@ public class CimmytRecordInterface extends CimmytRecord
     		linkToResourceSize = new ArrayList<String>();
         }
     	linkToResourceSize.add(size);
+    }
+
+
+    public void addSubject(CimmytSubject subject)
+    {
+    	CimmytRecord.Subject s=new CimmytRecord.Subject();
+    	
+    	s.generated=true;
+    	s.uri=subject.uri;
+    	s.value=subject.value;
+    	s.vocabulary=subject.vocabulary;
+    	s.score=Double.valueOf(subject.score);
+    	
+    	this.subject.add(s);
+    	//this.subject.add(subject);
     }
     
     public void getListOfFields()

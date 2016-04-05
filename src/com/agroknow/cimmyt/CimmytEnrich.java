@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -28,6 +30,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.codehaus.jettison.json.JSONException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -52,13 +55,35 @@ public class CimmytEnrich
 		this.enrichFreme(record);
 		this.enrichGeographical(record);
 		
+		
+		//this.cleanse(record);
+		
 	}
 
-	void enrichFreme(CimmytRecord record) throws IOException
+	void enrichFreme(CimmytRecord record)
 	{
 		Freme freme_enricher=new Freme();
+		List<CimmytSubject> subjects=new ArrayList<CimmytSubject>();
 		
-		freme_enricher.enrichSubjects(record.getDescription().get(0).getValue());
+		try 
+		{
+			for(int i=0;i<record.getDescription().size();i++)
+				subjects.addAll(freme_enricher.enrichSubjects(record.getDescription().get(i).getValue()));
+			for(int i=0;i<record.getSubject().size();i++)
+				subjects.addAll(freme_enricher.enrichSubjects(record.getSubject().get(i).getValue()));
+			for(int i=0;i<record.getTitle().size();i++)
+				subjects.addAll(freme_enricher.enrichSubjects(record.getTitle().get(i).getValue()));
+			
+			for(int i=0;i<subjects.size();i++)
+				record.addSubject(subjects.get(i));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	void enrichGeographical(CimmytRecord record)
@@ -133,6 +158,14 @@ public class CimmytEnrich
         		}
         	}
         }
+        
+        
+        /*
+         * TODO:
+         * 	view-source:http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier=
+         * 		oai:repository.cimmyt.org:10883/538&metadataPrefix=xoai
+         * 
+         * */
 
 		
 		
@@ -156,6 +189,24 @@ public class CimmytEnrich
 	    }
 	}
 	
+	/*
+	private void cleanse(CimmytRecord record)
+	{
+		List<CimmytRecord.Subject> subjects=new ArrayList<CimmytRecord.Subject>();
+		subjects=record.getSubject();
+		//System.out.println(subjects.size());
+		for(int i=0;i<subjects.size();i++)
+		{
+			for(int j=i+1;j<subjects.size();j++)
+			{
+				if(subjects.get(i).getValue().equals(subjects.get(j).getValue()))
+				{
+					
+				}
+			}
+		}
+	}
+	*/
 	
 	private Document parseXML(InputStream stream)
 		    throws Exception
