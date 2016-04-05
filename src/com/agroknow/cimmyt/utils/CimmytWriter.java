@@ -445,10 +445,10 @@ public class CimmytWriter
 					}
 					if(k!=i)
 						continue;
-					
+					boolean broken=exists(resource_links.get(i));
 					writer.println("\t\t<shownBy>");
 						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
-						writer.println("\t\t\t<broken>false</broken>");
+						writer.println("\t\t\t<broken>"+broken+"</broken>");
 					writer.println("\t\t</shownBy>");
 				}
 				
