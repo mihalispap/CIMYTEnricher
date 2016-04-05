@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.agroknow.cimmyt.external.Freme;
 import com.agroknow.cimmyt.parser.CimmytRecord;
 import com.agroknow.cimmyt.parser.CimmytRecordInterface;
 
@@ -48,28 +49,23 @@ public class CimmytEnrich
 		else if(record.getHandler().contains("data.cimmyt"))
 			this.enrichDVN(record);
 		
-		String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
-				+ "input="+URLEncoder.encode(record.getDescription().get(0).getValue(),"UTF-8")+"&informat=text&outformat=json-ld&source-lang=en&target-lang=en&domain=TaaS-1001";
-		
-		URL url = new URL(uri);
-		//logger.info("Calling FREME e-terminology: "+uri);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
-		
-		BufferedReader streamReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8")); 
-		StringBuilder responseStrBuilder = new StringBuilder();
-		String inputStr;
-		while ((inputStr = streamReader.readLine()) != null)
-		    responseStrBuilder.append(inputStr);
-		
-	    int responseCode = connection.getResponseCode();
-	    
-	    System.out.println(responseStrBuilder);
-	    
+		this.enrichFreme(record);
+		this.enrichGeographical(record);
 		
 	}
 
+	void enrichFreme(CimmytRecord record) throws IOException
+	{
+		Freme freme_enricher=new Freme();
+		
+		freme_enricher.enrichSubjects(record.getDescription().get(0).getValue());
+	}
+	
+	void enrichGeographical(CimmytRecord record)
+	{
+		
+	}
+	
 	void enrichDVN(CimmytRecord record)
 	{
 		/*TODO*/

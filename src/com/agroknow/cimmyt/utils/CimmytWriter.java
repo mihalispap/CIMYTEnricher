@@ -99,7 +99,8 @@ public class CimmytWriter
 		//	return;
 		
 		List<CimmytRecord.Subject> subjects=new ArrayList<CimmytRecord.Subject>();
-
+		subjects=record.getSubject();
+		System.out.println(subjects.size());
 		for(int i=0;i<subjects.size();i++)
 		{
 			writer.println("\t<subject>");
