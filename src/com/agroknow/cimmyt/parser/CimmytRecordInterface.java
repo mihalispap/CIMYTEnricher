@@ -84,7 +84,16 @@ public class CimmytRecordInterface extends CimmytRecord
     	if (linkToResource == null) {
     		linkToResource = new ArrayList<String>();
         }
-    	linkToResource.add(link);
+
+    	int i;
+    	for(i=0;i<linkToResource.size();i++)
+    	{
+    		if(linkToResource.get(i).equalsIgnoreCase(link))
+    			break;
+    	}
+    	
+    	if(i==linkToResource.size())
+    		linkToResource.add(link);
     }
 
     public void addResourceType(String type)
@@ -94,6 +103,24 @@ public class CimmytRecordInterface extends CimmytRecord
         }
     	linkToResourceType.add(type);
     }
+
+    public void addLabel(String l)
+    {
+    	if (linkToResourceLabel == null) {
+    		linkToResourceLabel = new ArrayList<String>();
+        }
+    	linkToResourceLabel.add(l);
+    }
+
+
+    public void addCategory(String c)
+    {
+    	if (linkToResourceCategory == null) {
+    		linkToResourceSize = new ArrayList<String>();
+        }
+    	linkToResourceSize.add(c);
+    }
+
 
     public void addResourceLinkSize(String size)
     {

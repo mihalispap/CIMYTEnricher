@@ -3,19 +3,30 @@ package com.agroknow.cimmyt.utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.codehaus.jettison.json.JSONException;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
+import com.agroknow.cimmyt.CimmytCollection;
+import com.agroknow.cimmyt.CimmytEnrich;
 import com.agroknow.cimmyt.CimmytOrganization;
 import com.agroknow.cimmyt.CimmytPerson;
 import com.agroknow.cimmyt.external.Freme;
@@ -30,9 +41,13 @@ public class CimmytWriter
 		
 		//CimmytRecord record=new C
 		writeObject(record,folder);
-		writeResource(record,folder);
+		if(record.getHandler().contains("repository"))
+			writeResource(record,folder);
+		else if(record.getHandler().contains("data.cimmyt"))
+			writeDatasetSoftware(record, folder);
 		writePersons(record,folder);
 		writeOrganizations(record,folder);
+		writeCollections(record,folder);
 		 
 	}
 	
@@ -131,7 +146,7 @@ public class CimmytWriter
 				 * TODO:
 				 * 		perhaps toLowerCase()??
 				 * */
-				writer.println("\t\t<value>"+subjects.get(i).getValue()+"</value>");
+				writer.println("\t\t<value>"+subjects.get(i).getValue().toLowerCase()+"</value>");
 				
 				for(int j=i+1;j<subjects.size();j++)
 				{
@@ -305,8 +320,15 @@ public class CimmytWriter
 				writer.println("\t</url>");
 			}
 
+			String base_url="";
+			
+			if(record.getHandler().contains("repository"))
+				base_url="http://repository.cimmyt.org/xmlui/handle/";
+			else if(record.getHandler().contains("data.cimmyt"))
+				base_url="http://data.cimmyt.org/dvn/dv/seedsofdiscoverydvn/faces/study/StudyPage.xhtml?globalId=hdl:";
+			
 			writer.println("\t<url>");
-				writer.println("\t\t<value>http://repository.cimmyt.org/xmlui/handle/"+record.getDomainid().get(0)+
+				writer.println("\t\t<value>"+base_url+record.getDomainid().get(0)+
 						"/"+record.getCdocid().get(0)+"</value>");
 				writer.println("\t\t<broken>false</id>");
 			writer.println("\t</url>");
@@ -355,7 +377,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<regions.size();i++)
 			{
-				writer.println("\t<focus>"+regions.get(i)+"</focus>");
+				writer.println("\t<coverage>"+regions.get(i)+"</coverage>");
 			}
 
 			List<String> places=new ArrayList<String>();
@@ -399,7 +421,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<rights.size();i++)
 			{
-				writer.println("\t<rights>"+rights.get(i)+"</rights>");
+				writer.println("\t<rights>"+rights.get(i).replaceAll("\\<.*?>","")+"</rights>");
 			}
 
 			List<String> citations=new ArrayList<String>();
@@ -442,11 +464,17 @@ public class CimmytWriter
 
 			List<String> resource_types=new ArrayList<String>();
 			resource_types=record.getLinkToResourceType();
+
+			List<String> resource_labels=new ArrayList<String>();
+			resource_labels=record.getLinkToResourceLabel();
+
+			List<String> resource_categories=new ArrayList<String>();
+			resource_categories=record.getLinkToResourceCategory();
 			
 			writer.println("\t<aggregation>");
 				
 				writer.println("\t\t<shownAt>");
-					writer.println("\t\t\t<value>http://repository.cimmyt.org/xmlui/handle/"+record.getDomainid().get(0)+
+					writer.println("\t\t\t<value>"+record.getHandler()+record.getDomainid().get(0)+
 						"/"+record.getCdocid().get(0)+"</value>");
 					writer.println("\t\t\t<broken>false</broken>");
 				writer.println("\t\t</shownAt>");
@@ -484,6 +512,22 @@ public class CimmytWriter
 					
 					writer.println("\t\t<linkToResource>");
 						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
+						try
+						{
+							writer.println("\t\t\t<label>"+resource_labels.get(i)+"</label>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							writer.println("\t\t\t<label>null</label>");
+						}
+						try
+						{
+							writer.println("\t\t\t<category>"+resource_categories.get(i)+"</category>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							writer.println("\t\t\t<category>null</category>");
+						}
 						try
 						{
 							writer.println("\t\t\t<type>"+resource_types.get(i)+"</type>");
@@ -720,6 +764,122 @@ public class CimmytWriter
 		}
 	}
 	
+	protected static void writeCollections(CimmytRecord record, String folder) throws FileNotFoundException, UnsupportedEncodingException
+	{
+		List<String> collections=new ArrayList<String>();
+		collections=record.getCset();
+
+		List<String> collection_ids=new ArrayList<String>();
+		collection_ids=record.getSetid();
+		
+		for(int i=0;i<collections.size();i++)
+		{
+			int id=Integer.valueOf(collection_ids.get(i));
+			if(id<0)
+				id*=-1;
+			
+			CimmytCollection collection=new CimmytCollection();
+			collection.id=id;
+			collection.uri="/cimmyt/collection/"+id;
+			
+			collection.spec=collections.get(i);
+			collection.handler=record.getHandler();
+			
+			if(collection.handler.contains("repository"))
+				collection.software="DSpace";
+			else if(collection.handler.contains("data.cimmyt"))
+				collection.software="Dataverse";
+
+			CimmytEnrich cimmyt_enrich=new CimmytEnrich();
+			try {
+				cimmyt_enrich.enrichCollection(collection);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			/*
+
+			String domain_id=record.getDomainid().get(0);
+			String doc_id=record.getCdocid().get(0);
+			
+			String url=collection.handler+"?verb=ListSets";
+			
+			
+			
+			URL url2 = new URL(url);
+	        URLConnection connection = url2.openConnection();
+
+	        Document doc = parseXML(connection.getInputStream());
+	        
+	        
+	        NodeList descNodes = 
+	        			doc.getLastChild().getChildNodes();
+	       
+	        XPathFactory xPathfactory = XPathFactory.newInstance();
+	        XPath xpath = xPathfactory.newXPath();
+	        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/DIDL/Item/Component/Resource");
+	        
+	        */
+
+			PrintWriter writer = new PrintWriter(folder+File.separator+id+".object.xml", "UTF-8");
+			
+			writer.println("<object>");
+				writer.println("\t<type>collection</type>");
+				
+				writer.println("\t<title>");
+					writer.println("\t\t<value>"+collection.name+"</value>");
+					writer.println("\t\t<lang/>");
+				writer.println("\t</title>");
+
+				writer.println("\t<description>");
+					writer.println("\t\t<value>"+collection.description+"</value>");
+					writer.println("\t\t<lang/>");
+				writer.println("\t</description>");
+					
+				writer.println("\t<subject/>");
+				
+				writer.println("\t<id>"+collection.id+"</id>");
+				writer.println("\t<uri>/cimmyt/collection/"+collection.id+"</uri>");
+				
+				writer.println("\t<language/>");
+				writer.println("\t<created/>");
+				writer.println("\t<updated/>");
+				
+			writer.println("</object>");
+			writer.close();
+			
+			writer = new PrintWriter(folder+File.separator+id+".collection.xml", "UTF-8");
+
+			
+			writer.println("<collection>");
+			
+				writer.println("\t<id>"+collection.id+"</id>");
+				writer.println("\t<uri>/cimmyt/collection/"+collection.id+"</uri>");
+				
+				writer.println("\t<name>"+collection.name+"</name>");
+				writer.println("\t<spec>"+collection.spec+"</spec>");
+				
+				writer.println("\t<about>");
+				
+					writer.println("\t\t<software>"+collection.software+"</software>");
+					writer.println("\t\t<handler>"+collection.handler+"</handler>");
+					writer.println("\t\t<repoName>"+collection.repoName+"</repoName>");
+					
+					for(int j=0;j<collection.metadataNames.size();j++)
+					{
+						writer.println("\t\t<metadataSchema>");
+							writer.println("\t\t\t<name>"+collection.metadataNames.get(j)+"</name>");
+							writer.println("\t\t\t<uri>"+collection.metadataURIs.get(j)+"</uri>");
+						writer.println("\t\t</metadataSchema>");
+					}
+				
+				writer.println("\t</about>");
+			
+			writer.println("</collection>");
+			writer.close();
+		}
+	}
+	
 	
 	public static boolean exists(String URLName){
 	    try {
@@ -755,6 +915,27 @@ public class CimmytWriter
 	        conn.disconnect();
 	    }
 	}
+	
+	private static Document parseXML(InputStream stream)
+		    throws Exception
+		    {
+		        DocumentBuilderFactory objDocumentBuilderFactory = null;
+		        DocumentBuilder objDocumentBuilder = null;
+		        Document doc = null;
+		        try
+		        {
+		            objDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+		            objDocumentBuilder = objDocumentBuilderFactory.newDocumentBuilder();
+
+		            doc = objDocumentBuilder.parse(stream);
+		        }
+		        catch(Exception ex)
+		        {
+		            throw ex;
+		        }       
+
+		        return doc;
+		    }
 	
 	
 }

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.UnsupportedEncodingException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -150,11 +151,17 @@ public class Enrich {
 						System.out.println(record.getLinkToResourceSize());
 						
 						
-						CimmytWriter writer=new CimmytWriter();
-						CimmytWriter.write2File(record,output);
 						
 						
 					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			        
+					CimmytWriter writer=new CimmytWriter();
+					try {
+						CimmytWriter.write2File(record,output);
+					} catch (UnsupportedEncodingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

@@ -678,9 +678,78 @@ public class CimmytEnrich
 		}
 	}
 	
-	void enrichDVN(CimmytRecord record)
+	void enrichDVN(CimmytRecord record) throws Exception
 	{
-		/*TODO*/
+		/*
+		 * 
+		 * http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10201&metadataPrefix=ddi
+		 * 
+		 * */	
+
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/otherMat");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("URI"))
+        				record.addResourceLink(attributes.item(j).getTextContent());
+        		}
+        	}
+        }
+        
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/otherMat/labl");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addLabel(nl.item(i).getTextContent());        		
+        	}
+        }
+
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/otherMat/notes");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addCategory(nl.item(i).getTextContent());        		
+        	}
+        }
+
 	}
 	
 	void enrichDSpace(CimmytRecord record) throws Exception
@@ -758,14 +827,10 @@ public class CimmytEnrich
 		url="http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier="
 				+ "oai:repository.cimmyt.org:"+domain_id+"/"+doc_id+"&metadataPrefix=xoai";
 		
-		
-		
 		url2 = new URL(url);
         connection = url2.openConnection();
 
         doc = parseXML(connection.getInputStream());
-        
-        
         descNodes = doc.getLastChild().getChildNodes();
 
         xPathfactory = XPathFactory.newInstance();
@@ -892,6 +957,108 @@ public class CimmytEnrich
         	}
         }
 		
+	}
+	
+	public void enrichCollection(CimmytCollection collection) throws Exception
+	{
+		String url=collection.handler+"?verb=Identify";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/Identify/repositoryName");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		collection.repoName=nl.item(i).getTextContent();
+        	}
+        }
+        
+        url=collection.handler+"?verb=ListMetadataFormats";
+		
+		url2 = new URL(url);
+        connection = url2.openConnection();
+
+        doc = parseXML(connection.getInputStream());
+        
+        
+        descNodes = doc.getLastChild().getChildNodes();
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/ListMetadataFormats/metadataFormat/metadataPrefix");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		collection.metadataNames.add(nl.item(i).getTextContent());        		
+        	}
+        }
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/ListMetadataFormats/metadataFormat/metadataNamespace");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		collection.metadataURIs.add(nl.item(i).getTextContent());        		
+        	}
+        }
+
+        url=collection.handler+"?verb=ListSets";
+		
+		url2 = new URL(url);
+        connection = url2.openConnection();
+        
+        doc = parseXML(connection.getInputStream());
+        descNodes = doc.getLastChild().getChildNodes();
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/ListSets/set/setName");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        //System.out.println("My Length:"+nl.getLength());
+        List<String> set_names=new ArrayList<String>();
+        for(int i=0;i<nl.getLength();i++)
+        	set_names.add(nl.item(i).getTextContent());
+        
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/ListSets/set/setSpec");
+        
+        NodeList nl2 = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        //System.out.println("LENGTH:::"+nl2.getLength()+"|"+set_names.size());
+        if(nl2.getLength()!=0)
+        {
+        	
+        	for(int i=0;i<nl2.getLength();i++)
+        	{
+        		//System.out.println("SET("+i+"): "+nl2.item(i).getTextContent());
+        		if(nl2.item(i).getTextContent().equals(collection.spec))
+        			collection.name=set_names.get(i);        		
+        	}
+        }
 	}
 	
 	private int getFileSize(URL url) {
