@@ -285,7 +285,16 @@ public class CimmytRecord {
     	if (linkToResource == null) {
     		linkToResource = new ArrayList<String>();
         }
-    	linkToResource.add(link);
+
+    	int i;
+    	for(i=0;i<linkToResource.size();i++)
+    	{
+    		if(linkToResource.get(i).equalsIgnoreCase(link))
+    			break;
+    	}
+    	
+    	if(i==linkToResource.size())
+    		linkToResource.add(link);
     }
 
     public void addResourceType(String type)

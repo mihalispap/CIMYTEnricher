@@ -767,7 +767,22 @@ public class CimmytEnrich
         
         
         descNodes = doc.getLastChild().getChildNodes();
-       
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='country']"
+        		+ "/element[@name='focus']/element[@name='en_US']/field[@name='value']");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		record.addRegion(nl.item(i).getTextContent());        		
+        	}
+        }
+
         xPathfactory = XPathFactory.newInstance();
         xpath = xPathfactory.newXPath();
         expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='region']"
@@ -857,7 +872,7 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		record.addResourceLink(nl.item(i).getTextContent());
-        		System.out.println("added:"+nl.item(i).getTextContent());
+        		
         	}
         }
         xPathfactory = XPathFactory.newInstance();
@@ -873,6 +888,7 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		record.addResourceLinkSize(nl.item(i).getTextContent());
+        		//System.out.println("added:"+nl.item(i).getTextContent());
         	}
         }
 		

@@ -2,6 +2,7 @@ package com.agroknow.cimmyt.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -15,6 +16,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.codehaus.jettison.json.JSONException;
 
+import com.agroknow.cimmyt.CimmytOrganization;
 import com.agroknow.cimmyt.CimmytPerson;
 import com.agroknow.cimmyt.external.Freme;
 import com.agroknow.cimmyt.parser.CimmytRecord;
@@ -29,7 +31,8 @@ public class CimmytWriter
 		//CimmytRecord record=new C
 		writeObject(record,folder);
 		writeResource(record,folder);
-		//writePersons(record,folder);
+		writePersons(record,folder);
+		writeOrganizations(record,folder);
 		 
 	}
 	
@@ -124,6 +127,10 @@ public class CimmytWriter
 				continue;
 			
 			writer.println("\t<subject>");
+				/*
+				 * TODO:
+				 * 		perhaps toLowerCase()??
+				 * */
 				writer.println("\t\t<value>"+subjects.get(i).getValue()+"</value>");
 				
 				for(int j=i+1;j<subjects.size();j++)
@@ -323,8 +330,18 @@ public class CimmytWriter
 						 * 	really parse file...
 						 * */
 						
+						String fao_geo=locations.get(i);
+						
+						if(fao_geo.contains(" "))
+						{
+							//fao_geo.replace(" ", "_");
+							//fao_geo.
+							String[] fao=fao_geo.split(" ");
+							fao_geo=fao[0].toLowerCase()+"_"+fao[1];
+						}
+						
 						writer.println("\t\t<uri>http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
-								locations.get(i)+"</uri>");
+								fao_geo+"</uri>");
 						writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
 					}
 					catch (IndexOutOfBoundsException e) {
@@ -338,7 +355,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<regions.size();i++)
 			{
-				writer.println("\t<region>"+regions.get(i)+"</region>");
+				writer.println("\t<focus>"+regions.get(i)+"</focus>");
 			}
 
 			List<String> places=new ArrayList<String>();
@@ -467,11 +484,41 @@ public class CimmytWriter
 					
 					writer.println("\t\t<linkToResource>");
 						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
-						writer.println("\t\t\t<type>"+resource_types.get(i)+"</type>");
-						writer.println("\t\t\t<size>"+resource_sizes.get(i)+"</size>");
+						try
+						{
+							writer.println("\t\t\t<type>"+resource_types.get(i)+"</type>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							writer.println("\t\t\t<type>null</type>");
+						}
+						try
+						{
+							writer.println("\t\t\t<size>"+resource_sizes.get(i)+"</size>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							URL resource_url;
+							try {
+								resource_url = new URL(resource_links.get(i));
+								int size=getFileSize(resource_url);
+								
+								if(size<=0)
+									throw(new MalformedURLException());
+								
+								writer.println("\t\t\t<size>"+size+"</size>");
+							} catch (MalformedURLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+								writer.println("\t\t\t<size>null</size>");
+							}
+						}
 					writer.println("\t\t</linkToResource>");
 				}	
-				
+				for(int i=0;i<resource_sizes.size();i++)
+				{
+					System.out.println(i+")"+resource_sizes.get(i));
+				}
 				
 			writer.println("\t</aggregation>");
 			
@@ -500,6 +547,8 @@ public class CimmytWriter
 	{
 		List<String> persons=new ArrayList<String>();
 		persons=record.getCreator();
+		persons.addAll(record.getContributor());
+		
 		for(int i=0;i<persons.size();i++)
 		{
 			int id=persons.get(i).hashCode();
@@ -537,11 +586,11 @@ public class CimmytWriter
 			writer = new PrintWriter(folder+File.separator+id+".person.xml", "UTF-8");
 
 			String[] fn_ln=person.name.split(", ");
-			person.first_name=fn_ln[0];
-			person.last_name=fn_ln[1];
+			person.last_name=fn_ln[0];
+			person.first_name=fn_ln[1];
 
 			Freme freme_enricher=new Freme();
-			person.orcid="";
+			person.orcid="null";
 			try {
 				person.orcid=freme_enricher.enrichPersons(person.first_name+" "+person.last_name);
 			} catch (MalformedURLException e) {
@@ -555,9 +604,118 @@ public class CimmytWriter
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			writer.println("<person>");
 			
+				writer.println("\t<fullName>"+person.name+"</fullName>");
+				writer.println("\t<lastName>"+person.last_name+"</lastName>");
+				writer.println("\t<firstName>"+person.first_name+"</firstName>");
+				
+				int pid=person.name.hashCode();
+				if(pid<0)
+					pid*=-1;
+				writer.println("\t<id>"+pid+"</id>");
+				writer.println("\t<uri>/cimmyt/person/"+pid+"</uri>");
+				
+				writer.println("\t<orcid>"+person.orcid+"</orcid>");
+				
+				/*
+				 * TODO:
+				 * 		really enrich...
+				 *  
+				 * */
+				writer.println("\t<url/>");
+				writer.println("\t<contact/>");
+				writer.println("\t<location/>");
+				writer.println("\t<affiliation/>");
+				writer.println("\t<photo/>");
+				writer.println("\t<shortBio/>");
+			
 			writer.println("</person>");
+			writer.close();
+		}
+	}
+	protected static void writeOrganizations(CimmytRecord record, String folder) throws FileNotFoundException, UnsupportedEncodingException
+	{
+		List<String> organizations=new ArrayList<String>();
+		organizations=record.getPublisher();
+		for(int i=0;i<organizations.size();i++)
+		{
+			int id=organizations.get(i).hashCode();
+			if(id<0)
+				id*=-1;
+			
+			CimmytOrganization organization=new CimmytOrganization();
+			organization.id=id;
+			organization.uri="/cimmyt/organization/"+id;
+			organization.name=organizations.get(i);
+
+			PrintWriter writer = new PrintWriter(folder+File.separator+id+".object.xml", "UTF-8");
+			
+			writer.println("<object>");
+				writer.println("\t<type>organization</type>");
+				
+				writer.println("\t<title>");
+					writer.println("\t\t<value>"+organization.name+"</value>");
+					writer.println("\t\t<lang/>");
+				writer.println("\t</title>");
+
+				writer.println("\t<description/>");
+				writer.println("\t<subject/>");
+				
+				writer.println("\t<id>"+organization.id+"</id>");
+				writer.println("\t<uri>/cimmyt/organization/"+organization.id+"</uri>");
+				
+				writer.println("\t<language/>");
+				writer.println("\t<created/>");
+				writer.println("\t<updated/>");
+				
+			writer.println("</object>");
+			writer.close();
+			
+			writer = new PrintWriter(folder+File.separator+id+".organization.xml", "UTF-8");
+
+			Freme freme_enricher=new Freme();
+			organization.viaf="null";
+			try {
+				organization.viaf=freme_enricher.enrichOrganizations(organization.name);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+			} catch (ProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			writer.println("<organization>");
+			
+				writer.println("\t<fullName>"+organization.full_name+"</fullName>");
+				
+				
+				int pid=organization.name.hashCode();
+				if(pid<0)
+					pid*=-1;
+				writer.println("\t<id>"+pid+"</id>");
+				writer.println("\t<uri>/cimmyt/organization/"+pid+"</uri>");
+				
+				writer.println("\t<viaf>"+organization.viaf+"</viaf>");
+				
+				/*
+				 * TODO:
+				 * 		really enrich...
+				 *  
+				 * */
+				writer.println("\t<url/>");
+				writer.println("\t<contact/>");
+				writer.println("\t<location/>");
+				writer.println("\t<address/>");
+				writer.println("\t<logo/>");
+			
+			writer.println("</organization>");
 			writer.close();
 		}
 	}
@@ -578,6 +736,26 @@ public class CimmytWriter
 	       return false;
 	    }
 	  }  
+	
+
+	private static int getFileSize(URL url) {
+	    HttpURLConnection conn = null;
+	    try {
+	        conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("HEAD");
+	        conn.getInputStream();
+	        
+	        System.out.println("ResponseCode:"+conn.getResponseCode());
+	        if(conn.getResponseCode()==200)
+	        	return conn.getContentLength();
+	        return -1;
+	    } catch (IOException e) {
+	        return -1;
+	    } finally {
+	        conn.disconnect();
+	    }
+	}
+	
 	
 }
 

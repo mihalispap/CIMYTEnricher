@@ -135,29 +135,31 @@ public class Enrich {
 	        JAXBElement<?> fhElement;
 			try {
 				
+				for(int i=0;i<listOfFiles.length;i++)
+				{
 				
-				fhElement = (JAXBElement<?>)u.unmarshal(new FileInputStream(listOfFiles[0].getAbsolutePath()));
-
-				CimmytRecord record = (CimmytRecord) fhElement.getValue();
-		        System.out.println(record.getApiid());
-		        
-		        CimmytEnrich enricher=new CimmytEnrich();
-		        try {
-					enricher.enrich(record);
-					
-					System.out.println(record.getLinkToResourceSize());
-					
-					
-					CimmytWriter writer=new CimmytWriter();
-					CimmytWriter.write2File(record,output);
-					
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					fhElement = (JAXBElement<?>)u.unmarshal(new FileInputStream(listOfFiles[i].getAbsolutePath()));
+	
+					CimmytRecord record = (CimmytRecord) fhElement.getValue();
+			        System.out.println(record.getApiid());
+			        
+			        CimmytEnrich enricher=new CimmytEnrich();
+			        try {
+						enricher.enrich(record);
+						
+						System.out.println(record.getLinkToResourceSize());
+						
+						
+						CimmytWriter writer=new CimmytWriter();
+						CimmytWriter.write2File(record,output);
+						
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			        
 				}
-		        
-		        
 		        
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block

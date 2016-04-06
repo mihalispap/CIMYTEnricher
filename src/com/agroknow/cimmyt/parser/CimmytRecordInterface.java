@@ -10,6 +10,7 @@ import com.agroknow.cimmyt.CimmytSubject;
 
 public class CimmytRecordInterface extends CimmytRecord
 {
+
     public void addGeonames(String geo)
     {
     	if (geonames == null) {
