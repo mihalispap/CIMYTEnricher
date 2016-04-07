@@ -79,8 +79,6 @@ public class CimmytEnrich
 			for(int i=0;i<record.getTitle().size();i++)
 				subjects.addAll(freme_enricher.enrichSubjects(record.getTitle().get(i).getValue()));
 			
-			for(int i=0;i<subjects.size();i++)
-				record.addSubject(subjects.get(i));
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -93,7 +91,11 @@ public class CimmytEnrich
 		{
 			e.printStackTrace();
 		}
+
+		System.out.println("Subjecrt size:"+subjects.size());
 		
+		for(int i=0;i<subjects.size();i++)
+			record.addSubject(subjects.get(i));
 	}
 	
 	void enrichGeographical(CimmytRecord record) throws IOException
@@ -774,7 +776,7 @@ public class CimmytEnrich
 		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
 				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
 		
-		url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10588&metadataPrefix=ddi";
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10588&metadataPrefix=ddi";
 		
 		URL url2 = new URL(url);
         URLConnection connection = url2.openConnection();

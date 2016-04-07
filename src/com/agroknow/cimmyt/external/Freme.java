@@ -24,7 +24,7 @@ public class Freme
 {
 
 	
-	public List<CimmytSubject> enrichSubjects(String value) throws JSONException, UnsupportedEncodingException, MalformedURLException, ProtocolException
+	public List<CimmytSubject> enrichSubjects(String value) throws MalformedURLException, UnsupportedEncodingException, ProtocolException, JSONException
 	{
 		String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"

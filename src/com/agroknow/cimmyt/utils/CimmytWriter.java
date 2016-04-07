@@ -104,14 +104,21 @@ public class CimmytWriter
 			writer.println("\t<description>");
 				writer.println("\t\t<value>"+descrs.get(i).getValue()+"</value>");
 				
-				if(titles.get(i).getLang()!=null)
-					writer.println("\t\t<lang>"+descrs.get(i).getLang()+"</lang>");
-				else
+				try
 				{
-					if(langs.size()==1)
-						writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
+					if(titles.get(i).getLang()!=null)
+						writer.println("\t\t<lang>"+descrs.get(i).getLang()+"</lang>");
 					else
-						writer.println("\t\t<lang/>");
+					{
+						if(langs.size()==1)
+							writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
+						else
+							writer.println("\t\t<lang/>");
+					}
+				}
+				catch(java.lang.IndexOutOfBoundsException e)
+				{
+					e.printStackTrace();
 				}
 			writer.println("\t</description>");
 		}
@@ -153,11 +160,18 @@ public class CimmytWriter
 				{
 					if(subjects.get(i).getValue().equalsIgnoreCase(subjects.get(j).getValue()))
 					{
-						if(!subjects.get(j).getUri().equals(subjects.get(i).getUri()))
+						try
 						{
-							writer.println("\t\t<uri>"+subjects.get(j).getUri()+"</uri>");
-							writer.println("\t\t<vocabulary>"+subjects.get(j).getVocabulary()+"</vocabulary>");
-							writer.println("\t\t<score>"+subjects.get(j).getScore()+"</score>");
+							if(!subjects.get(j).getUri().equals(subjects.get(i).getUri()))
+							{
+								writer.println("\t\t<uri>"+subjects.get(j).getUri()+"</uri>");
+								writer.println("\t\t<vocabulary>"+subjects.get(j).getVocabulary().toLowerCase()+"</vocabulary>");
+								writer.println("\t\t<score>"+subjects.get(j).getScore()+"</score>");
+							}
+						}
+						catch(java.lang.NullPointerException e)
+						{
+							e.printStackTrace();
 						}
 					}
 				}
