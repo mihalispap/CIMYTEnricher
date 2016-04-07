@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.codehaus.jettison.json.JSONException;
@@ -125,8 +126,13 @@ public class CimmytEnrich
 				  
 					boolean found=false;
 					String geonames_id="";
-					
+
 					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					else if(toCheck.equalsIgnoreCase(geonames[2]))
 					{
 							found=true;
 							geonames_id=geonames[0];
@@ -149,6 +155,77 @@ public class CimmytEnrich
 				toCheck=value.get(j).replace(")", "");
 				
 				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					else if(toCheck.equalsIgnoreCase(geonames[2]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"countries.db");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[4]))
+					{
+							found=true;
+							geonames_id=geonames[16];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						break;
+					}
+				}
+				br.close();
+			}for(int j=0;j<value.size();j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"continents.db");
 				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 	
 				String strLine;
@@ -195,6 +272,11 @@ public class CimmytEnrich
 					String geonames_id="";
 					
 					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					else if(toCheck.equalsIgnoreCase(geonames[2]))
 					{
 							found=true;
 							geonames_id=geonames[0];
@@ -692,6 +774,8 @@ public class CimmytEnrich
 		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
 				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
 		
+		url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10588&metadataPrefix=ddi";
+		
 		URL url2 = new URL(url);
         URLConnection connection = url2.openConnection();
 
@@ -703,7 +787,7 @@ public class CimmytEnrich
        
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
-        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/otherMat");
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/otherMat");
         
         NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
@@ -715,6 +799,7 @@ public class CimmytEnrich
         		
         		for(int j=0;j<attributes.getLength();j++)
         		{
+        			System.out.println(j+")"+attributes.item(j).getTextContent());
         			if(attributes.item(j).getNodeName().equals("URI"))
         				record.addResourceLink(attributes.item(j).getTextContent());
         		}
@@ -723,7 +808,7 @@ public class CimmytEnrich
         
         xPathfactory = XPathFactory.newInstance();
         xpath = xPathfactory.newXPath();
-        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/otherMat/labl");
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/otherMat/labl");
         
         nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
@@ -738,7 +823,7 @@ public class CimmytEnrich
 
         xPathfactory = XPathFactory.newInstance();
         xpath = xPathfactory.newXPath();
-        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/otherMat/notes");
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/otherMat/notes");
         
         nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
@@ -750,6 +835,700 @@ public class CimmytEnrich
         	}
         }
 
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/citation/prodStmt/producer");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		int j;
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		for(j=0;j<attributes.getLength();j++)
+        		{
+        			//System.out.println("Going to compare:\n------\n"+attributes.item(j).getNodeName()+"\n---");
+        			if(attributes.item(j).getNodeName().equals("abbr"))
+        				break;
+        		}
+        		if(j!=attributes.getLength())
+        			record.changeProducer(nl.item(i).getTextContent(), attributes.item(j).getTextContent());
+        	}
+        }
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/citation/prodStmt/producer");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		int j;
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		for(j=0;j<attributes.getLength();j++)
+        		{
+        			//System.out.println("Going to compare:\n------\n"+attributes.item(j).getNodeName()+"\n---");
+        			if(attributes.item(j).getNodeName().equals("abbr"))
+        				break;
+        		}
+        		if(j!=attributes.getLength())
+        			record.changeProducer(nl.item(i).getTextContent(), attributes.item(j).getTextContent());
+        	}
+        }
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/stdyInfo/subject/keyword");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+       
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		String voc="";
+        		String uri="";
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("vocab"))
+        				voc=attributes.item(j).getTextContent();
+        			if(attributes.item(j).getNodeName().equals("vocabURI"))
+        				uri=attributes.item(j).getTextContent();
+        		}
+        		if(voc.length()>0)
+        		{
+        			record.updateSubject(nl.item(i).getTextContent(),voc,uri);
+        		}
+        	}
+        }
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/stdyInfo/sumDscr/nation");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+       
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		String[] values=nl.item(i).getTextContent().split("; ");
+        		
+        		for(int j=0;j<values.length;j++)
+        			record.addRegion(values[j]);
+        	}
+        }
+
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/stdyInfo/sumDscr/geogCover");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+       
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		String[] values=nl.item(i).getTextContent().split("; ");
+        		
+        		for(int j=0;j<values.length;j++)
+        			record.addRegion(values[j]);
+        	}
+        }        
+        
+	}
+
+	public String extractKindOfData(CimmytRecord record) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10394&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/"
+        		+ "stdyInfo/sumDscr/dataKind");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	return nl.item(0).getTextContent().toLowerCase();
+        }
+        return "";
+	}
+
+	public String extractTimePeriod(CimmytRecord record) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10394&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/"
+        		+ "stdyInfo/sumDscr/timePrd");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0 && nl.getLength()>1)
+        {
+        	return nl.item(0).getTextContent()+"-"+nl.item(1).getTextContent();
+        }
+        return "";
+	}
+
+	public String extractFunding(CimmytRecord record) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10394&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/"
+        		+ "/citation/prodStmt/fundAg");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	return nl.item(0).getTextContent();
+        }
+        return "";
+	}
+
+	public List<String> extractProgramDVN(CimmytRecord record) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10394&metadataPrefix=ddi";
+		
+		List<String> values=new ArrayList<String>();
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/"
+        		+ "notes");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        System.out.println("SIZE:"+nl.getLength());
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("type"))
+        			{
+        				if(attributes.item(j).getTextContent().contains("Program")
+        						&& !attributes.item(j).getTextContent().contains("Abbreviation"))
+        				{
+        					values.add(attributes.item(j).getTextContent());
+        				}
+        			}
+        		}
+        	}
+        }
+        return values;
+	}
+
+	public List<String> extractProgramNameDVN(CimmytRecord record) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10394&metadataPrefix=ddi";
+		
+		List<String> values=new ArrayList<String>();
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/"
+        		+ "notes");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		String subject="";
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("subject"))
+        			{
+        				subject=attributes.item(j).getTextContent();
+        			}
+        			if(attributes.item(j).getNodeName().equals("type"))
+        			{
+        				if(attributes.item(j).getTextContent().contains("Program")
+        						&& !attributes.item(j).getTextContent().contains("Abbreviation"))
+        				{
+        					values.add(subject);
+        				}
+        			}
+        		}
+        	}
+        }
+        return values;
+	}
+
+	public List<String> extractAbbreviationDVN(CimmytRecord record) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10394&metadataPrefix=ddi";
+		
+		List<String> values=new ArrayList<String>();
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/"
+        		+ "notes");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("subject"))
+        			{
+        				if(attributes.item(j).getTextContent().contains("Program Abbreviation"))
+        				{
+        					values.add(attributes.item(j).getTextContent());
+        				}
+        			}
+        		}
+        	}
+        }
+
+        return values;
+	}
+	
+	public void enrichOrganizationDVN(CimmytRecord record, CimmytOrganization organization) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/prodStmt/producer");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		String abbr;
+        		
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("abbr"))
+        			{
+        				organization.full_name=nl.item(i).getTextContent();
+        				
+        				abbr=attributes.item(j).getTextContent();
+        				
+        				if(!abbr.equals(organization.name))
+        					continue;
+        				
+                		expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+                        		+ "/citation/prodStmt/producer[@abbr='"+abbr+"']/ExtLink");
+                		NodeList nl2 = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+                        
+                		System.out.println("---\n"+nl2.getLength()+"\n-----");
+                		
+                        if(nl2.getLength()!=0)
+                        {
+                        	for(int k=0;k<nl2.getLength();k++)
+                        	{
+                        		NamedNodeMap attributes_in=nl2.item(k).getAttributes();
+                        		
+                        		if(attributes_in.getLength()==1 && attributes_in.item(0).getNodeName().equals("URI"))
+                        		{
+                        			organization.url=attributes_in.item(0).getTextContent();
+                        		}
+                        		else if(attributes_in.getLength()==2)
+                        		{
+                        			if(attributes_in.item(0).getNodeName().equals("URI")
+                        					&& attributes_in.item(1).getTextContent().equals("image"))
+                        			{
+                        				organization.logo=attributes_in.item(0).getTextContent();
+                        			}
+                        		}
+                        	}
+                        }
+        			}
+        				
+        		}
+        	}
+        }
+        
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/distStmt/distrbtr");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		String abbr;
+        		
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("abbr"))
+        			{
+        				organization.full_name=nl.item(i).getTextContent();
+        				
+        				abbr=attributes.item(j).getTextContent();
+        				
+        				if(!abbr.equals(organization.name))
+        					continue;
+        				
+                		expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+                        		+ "/citation/distStmt/distrbtr[@abbr='"+abbr+"']/ExtLink");
+                		NodeList nl2 = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+                        
+                		System.out.println("---\n"+nl2.getLength()+"\n-----");
+                		
+                        if(nl2.getLength()!=0)
+                        {
+                        	for(int k=0;k<nl2.getLength();k++)
+                        	{
+                        		NamedNodeMap attributes_in=nl2.item(k).getAttributes();
+                        		
+                        		if(attributes_in.getLength()==1 && attributes_in.item(0).getNodeName().equals("URI"))
+                        		{
+                        			organization.url=attributes_in.item(0).getTextContent();
+                        		}
+                        		else if(attributes_in.getLength()==2)
+                        		{
+                        			if(attributes_in.item(0).getNodeName().equals("URI")
+                        					&& attributes_in.item(1).getTextContent().equals("image"))
+                        			{
+                        				organization.logo=attributes_in.item(0).getTextContent();
+                        			}
+                        		}
+                        	}
+                        }
+        			}
+        				
+        		}
+        	}
+        }
+        
+	}
+
+	public void enrichPersonDVN(CimmytRecord record, CimmytPerson person) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/distStmt/contact");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		//System.out.println("COMPARING:"+person.name+", with:"+nl.item(i).getTextContent());
+        		if(!person.name.equals(nl.item(i).getTextContent()))
+        			continue;
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("email"))
+        				person.contact=attributes.item(j).getTextContent();
+        			if(attributes.item(j).getNodeName().equals("affiliation"))
+        				person.affiliation_name=attributes.item(j).getTextContent();
+        		}
+        		//System.out.println(person.affiliation_name+", "+person.contact);
+        	}
+        }
+        
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/rspStmt/AuthEnty");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		//System.out.println("COMPARING:"+person.name+", with:"+nl.item(i).getTextContent());
+        		if(!person.name.equals(nl.item(i).getTextContent()))
+        			continue;
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("affiliation"))
+        				person.affiliation_name=attributes.item(j).getTextContent();
+        		}
+        		//System.out.println(person.affiliation_name+", "+person.contact);
+        	}
+        }
+        
+        
+	}
+
+	public List<String> extractPersonsDVN(CimmytRecord record) throws XPathExpressionException, Exception
+	{
+		List<String> persons=new ArrayList<String>();
+		
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/distStmt/contact");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		String person=nl.item(i).getTextContent();
+        		//if(!person.contains(","))
+        		//	person=person.replace(" ", ", ");
+        		persons.add(person);
+        	}
+        }
+        
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/distStmt/depositr");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		persons.add(nl.item(i).getTextContent());
+        	}
+        }
+
+		
+		return persons;
+	}
+
+	public List<String> extractOrganizationsDVN(CimmytRecord record) throws XPathExpressionException, Exception
+	{
+		List<String> organizations=new ArrayList<String>();
+		
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+        
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/rspStmt/AuthEnty");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("affiliation"))
+        				organizations.add(attributes.item(j).getTextContent());
+        		}
+        		//System.out.println(person.affiliation_name+", "+person.contact);
+        	}
+        }
+        
+        xPathfactory = XPathFactory.newInstance();
+        xpath = xPathfactory.newXPath();
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
+        		+ "/citation/distStmt/contact");
+        
+        nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		for(int j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("affiliation"))
+        				organizations.add(attributes.item(j).getTextContent());
+        		}
+        		//System.out.println(person.affiliation_name+", "+person.contact);
+        	}
+        }
+        
+		return organizations;
 	}
 	
 	void enrichDSpace(CimmytRecord record) throws Exception

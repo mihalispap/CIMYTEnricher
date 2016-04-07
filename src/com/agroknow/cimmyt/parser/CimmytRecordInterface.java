@@ -10,6 +10,34 @@ import com.agroknow.cimmyt.CimmytSubject;
 
 public class CimmytRecordInterface extends CimmytRecord
 {
+	public void updateSubject(String s, String v, String u)
+	{
+		for(int i=0;i<this.subject.size();i++)
+		{
+			if(subject.get(i).value.equals(s))
+			{
+				subject.get(i).vocabulary=v;
+				subject.get(i).uri=u;
+				return;
+			}
+		}
+	}
+	
+	public void changeProducer(String from, String to)
+	{
+		List<String> producers=new ArrayList<String>();
+		producers=this.getPublisher();
+		
+		for(int i=0;i<producers.size();i++)
+		{
+			if(producers.get(i).equals(from))
+			{
+				producers.remove(i);
+				producers.add(to);
+				return;
+			}
+		}
+	}
 
     public void addGeonames(String geo)
     {

@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.codehaus.jettison.json.JSONException;
@@ -66,7 +67,7 @@ public class CimmytWriter
 		if(handler.contains("repository.cimmyt"))
 			type="resource";
 		else if(handler.contains("data.cimmyt"))
-			type="dataset/software";
+			type="dataset_software";
 		
 		writer.println("\t<type>"+type+"</type>");
 		
@@ -593,6 +594,20 @@ public class CimmytWriter
 		persons=record.getCreator();
 		persons.addAll(record.getContributor());
 		
+		if(record.getHandler().contains("data.cimmyt"))
+		{
+			CimmytEnrich enricher=new CimmytEnrich();
+			try {
+				persons.addAll(enricher.extractPersonsDVN(record));
+			} catch (XPathExpressionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		for(int i=0;i<persons.size();i++)
 		{
 			int id=persons.get(i).hashCode();
@@ -604,6 +619,15 @@ public class CimmytWriter
 			person.uri="/cimmyt/person/"+id;
 			person.name=persons.get(i);
 
+			CimmytEnrich enricher=new CimmytEnrich();
+			try {
+				enricher.enrichPersonDVN(record,person);
+				System.out.println("OUTSIDE:"+person.affiliation_name);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			PrintWriter writer = new PrintWriter(folder+File.separator+id+".object.xml", "UTF-8");
 			
 			writer.println("<object>");
@@ -630,13 +654,45 @@ public class CimmytWriter
 			writer = new PrintWriter(folder+File.separator+id+".person.xml", "UTF-8");
 
 			String[] fn_ln=person.name.split(", ");
-			person.last_name=fn_ln[0];
-			person.first_name=fn_ln[1];
-
+			
+			try
+			{
+				if(fn_ln.length<=2)
+				{
+					person.last_name=fn_ln[0];
+					person.first_name=fn_ln[1];
+				}
+				else
+				{
+					person.last_name="";
+					person.first_name="";
+				}
+			}
+			catch(java.lang.ArrayIndexOutOfBoundsException e)
+			{
+				fn_ln=person.name.split(" ");
+				try
+				{
+					person.last_name=fn_ln[0];
+					person.first_name=fn_ln[1];
+				}
+				catch(java.lang.ArrayIndexOutOfBoundsException e2)
+				{
+					person.last_name=person.first_name="";
+				}
+			}
+			
 			Freme freme_enricher=new Freme();
 			person.orcid="null";
 			try {
-				person.orcid=freme_enricher.enrichPersons(person.first_name+" "+person.last_name);
+				List<String> locations=record.getLocation();
+				String compact_locs="";
+				
+				for(int j=0;j<locations.size();j++)
+					compact_locs+=locations.get(j)+" ";
+				
+				person.orcid=freme_enricher.enrichPersons(person.first_name+" "
+						+person.last_name+" "+person.affiliation_name);
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -669,9 +725,24 @@ public class CimmytWriter
 				 *  
 				 * */
 				writer.println("\t<url/>");
-				writer.println("\t<contact/>");
+								
+				writer.println("\t<contact>"+person.contact+"</contact>");
 				writer.println("\t<location/>");
-				writer.println("\t<affiliation/>");
+				
+				if(!person.affiliation_name.isEmpty())
+				{
+					writer.println("\t<affiliation>");
+						writer.println("\t\t<value>"+person.affiliation_name+"</value>");
+						int aid=person.affiliation_name.hashCode();
+						if(aid<0)
+							aid*=-1;
+						writer.println("\t\t<id>"+aid+"</id>");
+						writer.println("\t\t<type>organization</type>");
+						writer.println("\t\t<uri>/cimmyt/organization/"+aid+"</uri>");
+					writer.println("\t</affiliation>");
+				}
+				else
+					writer.println("\t<affiliation/>");
 				writer.println("\t<photo/>");
 				writer.println("\t<shortBio/>");
 			
@@ -679,10 +750,20 @@ public class CimmytWriter
 			writer.close();
 		}
 	}
+	
 	protected static void writeOrganizations(CimmytRecord record, String folder) throws FileNotFoundException, UnsupportedEncodingException
 	{
 		List<String> organizations=new ArrayList<String>();
 		organizations=record.getPublisher();
+		
+		CimmytEnrich enricher=new CimmytEnrich();
+		try {
+			organizations.addAll(enricher.extractOrganizationsDVN(record));
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}		
+		
 		for(int i=0;i<organizations.size();i++)
 		{
 			int id=organizations.get(i).hashCode();
@@ -693,6 +774,15 @@ public class CimmytWriter
 			organization.id=id;
 			organization.uri="/cimmyt/organization/"+id;
 			organization.name=organizations.get(i);
+
+			try {
+				enricher.enrichOrganizationDVN(record,organization);
+				//System.out.println("OUTSIDE:"+person.affiliation_name);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+						
 
 			PrintWriter writer = new PrintWriter(folder+File.separator+id+".object.xml", "UTF-8");
 			
@@ -753,11 +843,11 @@ public class CimmytWriter
 				 * 		really enrich...
 				 *  
 				 * */
-				writer.println("\t<url/>");
+				writer.println("\t<url>"+organization.url+"</url>");
 				writer.println("\t<contact/>");
 				writer.println("\t<location/>");
 				writer.println("\t<address/>");
-				writer.println("\t<logo/>");
+				writer.println("\t<logo>"+organization.logo+"</logo>");
 			
 			writer.println("</organization>");
 			writer.close();
@@ -880,6 +970,348 @@ public class CimmytWriter
 		}
 	}
 	
+
+	protected static void writeDatasetSoftware(CimmytRecord record, String folder) throws FileNotFoundException, UnsupportedEncodingException
+	{
+		PrintWriter writer = new PrintWriter(folder+File.separator+record.getApiid()+".dataset_software.xml", "UTF-8");
+		writer.println("<dataset_software>");
+		
+			List<String> types=new ArrayList<String>();
+			types=record.getType();
+			
+			for(int i=0;i<types.size();i++)
+				writer.println("\t<type>"+types.get(i)+"</type>");
+		
+			writer.println("\t<id>"+record.getApiid()+"</id>");
+			writer.println("\t<uri>/cimmyt/dataset_software/"+record.getApiid()+"</uri>");
+			
+			List<String> creators=new ArrayList<String>();
+			creators=record.getCreator();
+			
+			for(int i=0;i<creators.size();i++)
+			{
+				int cid=creators.get(i).hashCode();
+				if(cid<0)
+					cid*=-1;
+				
+				writer.println("\t<creator>");
+					writer.println("\t\t<value>"+creators.get(i)+"</value>");
+					writer.println("\t\t<id>"+cid+"</id>");
+					writer.println("\t\t<uri>/cimmyt/person/"+cid+"</uri>");
+					writer.println("\t\t<type>person</type>");
+				writer.println("\t</creator>");
+			}
+			
+			List<String> distributors=new ArrayList<String>();
+			distributors=record.getPublisher();
+			
+			for(int i=0;i<distributors.size();i++)
+			{
+				int cid=distributors.get(i).hashCode();
+				if(cid<0)
+					cid*=-1;
+				
+				writer.println("\t<publisher>");
+					writer.println("\t\t<value>"+distributors.get(i)+"</value>");
+					writer.println("\t\t<id>"+cid+"</id>");
+					writer.println("\t\t<uri>/cimmyt/organization/"+cid+"</uri>");
+					writer.println("\t\t<type>organization</type>");
+				writer.println("\t</publisher>");
+			}
+			
+			List<XMLGregorianCalendar> dates=new ArrayList<XMLGregorianCalendar>();
+			dates=record.getPubDate();
+			
+			for(int i=0;i<dates.size();i++)
+			{
+				writer.println("\t<date>"+dates.get(i)+"</date>");
+			}
+
+			List<String> urls=new ArrayList<String>();
+			urls=record.getUrl();
+			
+			for(int i=0;i<urls.size();i++)
+			{
+				boolean broken=exists(urls.get(i));
+				writer.println("\t<url>");
+					writer.println("\t\t<value>"+urls.get(i)+"</value>");
+					writer.println("\t\t<broken>"+broken+"</id>");
+				writer.println("\t</url>");
+			}
+
+			String base_url="";
+			
+			if(record.getHandler().contains("repository"))
+				base_url="http://repository.cimmyt.org/xmlui/handle/";
+			else if(record.getHandler().contains("data.cimmyt"))
+				base_url="http://data.cimmyt.org/dvn/study?globalId=hdl:";
+			
+			writer.println("\t<url>");
+				writer.println("\t\t<value>"+base_url+record.getDomainid().get(0)+
+						"/"+record.getCdocid().get(0)+"</value>");
+				writer.println("\t\t<broken>false</id>");
+			writer.println("\t</url>");
+
+			List<String> locations=new ArrayList<String>();
+			locations=record.getLocation();
+			List<String> geonames=new ArrayList<String>();
+			geonames=record.getGeonames();
+			
+			for(int i=0;i<locations.size();i++)
+			{
+				writer.println("\t<location>");
+					writer.println("\t\t<value>"+locations.get(i)+"</value>");
+					try
+					{
+						writer.println("\t\t<uri>"+geonames.get(i)+"</uri>");
+						writer.println("\t\t<vocabulary>geonames</vocabulary>");
+						
+						/*
+						 * TODO:
+						 * 	really parse file...
+						 * */
+						
+						String fao_geo=locations.get(i);
+						
+						if(fao_geo.contains(" "))
+						{
+							//fao_geo.replace(" ", "_");
+							//fao_geo.
+							String[] fao=fao_geo.split(" ");
+							fao_geo=fao[0].toLowerCase()+"_"+fao[1];
+						}
+						
+						writer.println("\t\t<uri>http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
+								fao_geo+"</uri>");
+						writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
+					}
+					catch (IndexOutOfBoundsException e) {
+						
+					}
+				writer.println("\t</location>");
+			}
+
+			List<String> regions=new ArrayList<String>();
+			regions=record.getRegion();
+			
+			for(int i=0;i<regions.size();i++)
+			{
+				writer.println("\t<coverage>"+regions.get(i)+"</coverage>");
+			}
+
+
+			List<String> rights=new ArrayList<String>();
+			rights=record.getRights();
+			
+			for(int i=0;i<rights.size();i++)
+			{
+				writer.println("\t<rights>"+rights.get(i).replaceAll("\\<.*?>","")+"</rights>");
+			}
+
+			List<String> citations=new ArrayList<String>();
+			citations=record.getCitation();
+			
+			for(int i=0;i<citations.size();i++)
+			{
+				writer.println("\t<citation>"+citations.get(i)+"</citation>");
+			}
+
+			CimmytEnrich enricher=new CimmytEnrich();
+			String kind_of_data="";
+			try {
+				kind_of_data = enricher.extractKindOfData(record);
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			
+			writer.println("\t<kindOfData>"+kind_of_data+"</kindOfData>");
+
+			String time_period="";
+			try {
+				time_period = enricher.extractTimePeriod(record);
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			
+			writer.println("\t<timePeriod>"+time_period+"</timePeriod>");
+
+			String funding="";
+			try {
+				funding = enricher.extractFunding(record);
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			
+			writer.println("\t<funding>"+funding+"</funding>");
+			
+			List<String> relation_abbr=new ArrayList<String>();
+			List<String> relation_program=new ArrayList<String>();
+			List<String> relation_name=new ArrayList<String>();
+			try {
+				relation_program = enricher.extractProgramDVN(record);
+				relation_name = enricher.extractProgramNameDVN(record);
+				//relation_abbr = enricher.extractAbbreviationDVN(record);
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			
+			for(int i=0;i<relation_program.size();i++)
+			{
+				String value=relation_program.get(i);
+				try
+				{
+					value+=": "+relation_name.get(i);
+					try
+					{
+						//value+="("+relation_abbr.get(i)+")";
+					}
+					catch(java.lang.IndexOutOfBoundsException e)
+					{
+						
+					}
+				}
+				catch(java.lang.IndexOutOfBoundsException e)
+				{
+					
+				}
+				writer.println("\t<relation>"+value+"\t</relation>");
+			}
+			
+			
+			
+
+			List<String> resource_links=new ArrayList<String>();
+			resource_links=record.getLinkToResource();
+
+			List<String> resource_sizes=new ArrayList<String>();
+			resource_sizes=record.getLinkToResourceSize();
+
+			List<String> resource_types=new ArrayList<String>();
+			resource_types=record.getLinkToResourceType();
+
+			List<String> resource_labels=new ArrayList<String>();
+			resource_labels=record.getLinkToResourceLabel();
+
+			List<String> resource_categories=new ArrayList<String>();
+			resource_categories=record.getLinkToResourceCategory();
+			
+			writer.println("\t<aggregation>");
+				
+				writer.println("\t\t<shownAt>");
+					writer.println("\t\t\t<value>"+record.getHandler()+record.getDomainid().get(0)+
+						"/"+record.getCdocid().get(0)+"</value>");
+					writer.println("\t\t\t<broken>false</broken>");
+				writer.println("\t\t</shownAt>");
+				
+				for(int i=0;i<resource_links.size();i++)
+				{
+					int k;
+					
+					for(k=0;k<i;k++)
+					{
+						if(resource_links.get(i).equals(resource_links.get(k)))
+							break;
+					}
+					if(k!=i)
+						continue;
+					boolean broken=exists(resource_links.get(i));
+					writer.println("\t\t<shownBy>");
+						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
+						writer.println("\t\t\t<broken>"+broken+"</broken>");
+					writer.println("\t\t</shownBy>");
+				}
+				
+				for(int i=0;i<resource_links.size();i++)
+				{
+
+					int k;
+					
+					for(k=0;k<i;k++)
+					{
+						if(resource_links.get(i).equals(resource_links.get(k)))
+							break;
+					}
+					if(k!=i)
+						continue;
+					
+					writer.println("\t\t<linkToResource>");
+						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
+						try
+						{
+							writer.println("\t\t\t<label>"+resource_labels.get(i)+"</label>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							writer.println("\t\t\t<label>null</label>");
+						}
+						try
+						{
+							writer.println("\t\t\t<category>"+resource_categories.get(i)+"</category>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							writer.println("\t\t\t<category>null</category>");
+						}
+						try
+						{
+							writer.println("\t\t\t<type>"+resource_types.get(i)+"</type>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							writer.println("\t\t\t<type>null</type>");
+						}
+						try
+						{
+							writer.println("\t\t\t<size>"+resource_sizes.get(i)+"</size>");
+						}
+						catch(java.lang.IndexOutOfBoundsException e)
+						{
+							URL resource_url;
+							try {
+								resource_url = new URL(resource_links.get(i));
+								int size=getFileSize(resource_url);
+								
+								if(size<=0)
+									throw(new MalformedURLException());
+								
+								writer.println("\t\t\t<size>"+size+"</size>");
+							} catch (MalformedURLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+								writer.println("\t\t\t<size>null</size>");
+							}
+						}
+					writer.println("\t\t</linkToResource>");
+				}	
+				for(int i=0;i<resource_sizes.size();i++)
+				{
+					System.out.println(i+")"+resource_sizes.get(i));
+				}
+				
+			writer.println("\t</aggregation>");
+			
+						
+			List<String> collections=new ArrayList<String>();
+			collections=record.getSetid();
+				
+			for(int i=0;i<collections.size();i++)
+			{
+				writer.println("\t<collection>");
+					writer.println("\t\t<id>"+collections.get(i)+"</id>");
+					writer.println("\t\t<uri>/cimmyt/collection/"+collections.get(i)+"</uri>");
+					writer.println("\t\t<type>collection</type>");
+				writer.println("\t</collection>");
+			}
+			
+			
+			
+		writer.println("</dataset_software>");
+		writer.close();
+	}
 	
 	public static boolean exists(String URLName){
 	    try {

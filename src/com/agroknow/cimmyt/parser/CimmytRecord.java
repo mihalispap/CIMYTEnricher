@@ -219,6 +219,39 @@ public class CimmytRecord {
     protected List<CimmytRecord.Subject> subject;
 
 
+	public void updateSubject(String s, String v, String u)
+	{
+		for(int i=0;i<this.subject.size();i++)
+		{
+			if(subject.get(i).value.equals(s))
+			{
+				subject.get(i).vocabulary=v;
+				subject.get(i).uri=u;
+				return;
+			}
+		}
+		Subject sub=new Subject();
+		sub.value=s;
+		sub.vocabulary=v;
+		sub.uri=u;
+		subject.add(sub);
+	}
+	
+	public void changeProducer(String from, String to)
+	{
+		List<String> producers=new ArrayList<String>();
+		producers=this.getPublisher();
+		
+		for(int i=0;i<producers.size();i++)
+		{
+			if(producers.get(i).equals(from))
+			{
+				producers.remove(i);
+				producers.add(to);
+				return;
+			}
+		}
+	}
     public void addGeonames(String geo)
     {
     	if (geonames == null) {
@@ -324,9 +357,9 @@ public class CimmytRecord {
     public void addCategory(String c)
     {
     	if (linkToResourceCategory == null) {
-    		linkToResourceSize = new ArrayList<String>();
+    		linkToResourceCategory = new ArrayList<String>();
         }
-    	linkToResourceSize.add(c);
+    	linkToResourceCategory.add(c);
     }
 
 
