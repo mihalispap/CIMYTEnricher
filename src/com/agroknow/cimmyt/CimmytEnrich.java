@@ -82,17 +82,17 @@ public class CimmytEnrich
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		catch (java.lang.NullPointerException e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
-		System.out.println("Subjecrt size:"+subjects.size());
+		//System.out.println("Subjecrt size:"+subjects.size());
 		
 		for(int i=0;i<subjects.size();i++)
 			record.addSubject(subjects.get(i));
@@ -743,7 +743,7 @@ public class CimmytEnrich
 					boolean found=false;
 					String geonames_id="";
 					
-					System.out.println("Comparing:"+value[j]+" with:"+geonames[1]);
+					//System.out.println("Comparing:"+value[j]+" with:"+geonames[1]);
 	
 					if(value[j].equalsIgnoreCase(geonames[1]))
 					{
@@ -801,7 +801,7 @@ public class CimmytEnrich
         		
         		for(int j=0;j<attributes.getLength();j++)
         		{
-        			System.out.println(j+")"+attributes.item(j).getTextContent());
+        			//System.out.println(j+")"+attributes.item(j).getTextContent());
         			if(attributes.item(j).getNodeName().equals("URI"))
         				record.addResourceLink(attributes.item(j).getTextContent());
         		}
@@ -980,6 +980,70 @@ public class CimmytEnrich
         return "";
 	}
 
+	public String extractNotesDVN(CimmytRecord record) throws Exception
+	{
+		String domain_id=record.getDomainid().get(0);
+		String doc_id=record.getCdocid().get(0);
+		
+		String url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:"
+				+ ""+domain_id+"/"+doc_id+"&metadataPrefix=ddi";
+		
+		//url="http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10394&metadataPrefix=ddi";
+		
+		URL url2 = new URL(url);
+        URLConnection connection = url2.openConnection();
+
+        Document doc = parseXML(connection.getInputStream());
+        
+        String notes="";
+        
+        NodeList descNodes = 
+        			doc.getLastChild().getChildNodes();
+       
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr/"
+        		+ "notes");
+        
+        NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        
+        //System.out.println("SIZE:"+nl.getLength());
+        if(nl.getLength()!=0)
+        {
+        	for(int i=0;i<nl.getLength();i++)
+        	{
+        		NamedNodeMap attributes=nl.item(i).getAttributes();
+        		
+        		int j;
+        		String type="";
+        		String subject="";
+        		boolean to_write=true;
+        		
+        		for(j=0;j<attributes.getLength();j++)
+        		{
+        			if(attributes.item(j).getNodeName().equals("type"))
+        			{
+        				type=attributes.item(j).getTextContent();
+        				if(!attributes.item(j).getTextContent().contains("Program")
+        						&& !attributes.item(j).getTextContent().contains("Abbreviation"))
+        				{
+        					to_write=false;
+        				}
+        			}
+        			if(attributes.item(j).getNodeName().equals("subject"))
+        			{
+        				subject=attributes.item(j).getTextContent();
+        			}
+        		}
+        		
+        		if(to_write)
+        			notes+="\n\t<notes>"+type+": "+subject+"</notes>";
+        			
+        	}
+        }
+        return notes;
+	}
+
 	public String extractTimePeriod(CimmytRecord record) throws Exception
 	{
 		String domain_id=record.getDomainid().get(0);
@@ -1074,7 +1138,7 @@ public class CimmytEnrich
         
         NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
-        System.out.println("SIZE:"+nl.getLength());
+        //System.out.println("SIZE:"+nl.getLength());
         if(nl.getLength()!=0)
         {
         	for(int i=0;i<nl.getLength();i++)
@@ -1249,7 +1313,7 @@ public class CimmytEnrich
                         		+ "/citation/prodStmt/producer[@abbr='"+abbr+"']/ExtLink");
                 		NodeList nl2 = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
                         
-                		System.out.println("---\n"+nl2.getLength()+"\n-----");
+                		//System.out.println("---\n"+nl2.getLength()+"\n-----");
                 		
                         if(nl2.getLength()!=0)
                         {
@@ -1307,7 +1371,7 @@ public class CimmytEnrich
                         		+ "/citation/distStmt/distrbtr[@abbr='"+abbr+"']/ExtLink");
                 		NodeList nl2 = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
                         
-                		System.out.println("---\n"+nl2.getLength()+"\n-----");
+                		//System.out.println("---\n"+nl2.getLength()+"\n-----");
                 		
                         if(nl2.getLength()!=0)
                         {
@@ -1574,7 +1638,7 @@ public class CimmytEnrich
         		{
         			String value=attributes.item(j).getTextContent();
         			String name=attributes.item(j).getNodeName();
-        			System.out.println(j+")"+value+", name:"+name);
+        			//System.out.println(j+")"+value+", name:"+name);
         			
         			if(name.equals("mimeType"))
         				record.addResourceType(value);
@@ -1584,13 +1648,13 @@ public class CimmytEnrich
         			/*TODO: perhaps on everything?*/
         			if(value.endsWith(".pdf"))
         			{
-        				System.out.println("In here..");
+        				//System.out.println("In here..");
         				URL urltopdf = new URL(value);
         				int size=getFileSize(urltopdf);
         				
         				if(size!=-1)
         					record.addResourceLinkSize(String.valueOf(size));
-        				System.out.println(size);
+        				//System.out.println(size);
         			}
         			
         		}
@@ -1849,7 +1913,7 @@ public class CimmytEnrich
 	        conn.setRequestMethod("HEAD");
 	        conn.getInputStream();
 	        
-	        System.out.println(conn.getResponseCode());
+	        //System.out.println(conn.getResponseCode());
 	        if(conn.getResponseCode()==200)
 	        	return conn.getContentLength();
 	        return -1;

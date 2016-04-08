@@ -58,7 +58,6 @@ public class CimmytWriter
 		PrintWriter writer = new PrintWriter(folder+File.separator+record.getApiid()+".object.xml", "UTF-8");
 		writer.println("<object>");
 
-
 		List<CimmytRecord.Title> titles=new ArrayList<CimmytRecord.Title>();
 				
 		String handler=record.getHandler();
@@ -135,7 +134,7 @@ public class CimmytWriter
 		
 		List<CimmytRecord.Subject> subjects=new ArrayList<CimmytRecord.Subject>();
 		subjects=record.getSubject();
-		System.out.println(subjects.size());
+		//System.out.println(subjects.size());
 		for(int i=0;i<subjects.size();i++)
 		{
 			int k;
@@ -574,10 +573,10 @@ public class CimmytWriter
 						}
 					writer.println("\t\t</linkToResource>");
 				}	
-				for(int i=0;i<resource_sizes.size();i++)
+				/*for(int i=0;i<resource_sizes.size();i++)
 				{
 					System.out.println(i+")"+resource_sizes.get(i));
-				}
+				}*/
 				
 			writer.println("\t</aggregation>");
 			
@@ -636,7 +635,7 @@ public class CimmytWriter
 			CimmytEnrich enricher=new CimmytEnrich();
 			try {
 				enricher.enrichPersonDVN(record,person);
-				System.out.println("OUTSIDE:"+person.affiliation_name);
+				//System.out.println("OUTSIDE:"+person.affiliation_name);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -709,14 +708,14 @@ public class CimmytWriter
 						+person.last_name+" "+person.affiliation_name);
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 				
 			} catch (ProtocolException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			
 			writer.println("<person>");
@@ -1195,7 +1194,16 @@ public class CimmytWriter
 				writer.println("\t<relation>"+value+"\t</relation>");
 			}
 			
-			
+			String notes_tag="";
+			try
+			{
+				notes_tag=enricher.extractNotesDVN(record);
+			}
+			catch(Exception e)
+			{
+				
+			}
+			writer.println(notes_tag);
 			
 
 			List<String> resource_links=new ArrayList<String>();
@@ -1295,16 +1303,12 @@ public class CimmytWriter
 								writer.println("\t\t\t<size>"+size+"</size>");
 							} catch (MalformedURLException e1) {
 								// TODO Auto-generated catch block
-								e1.printStackTrace();
+								//e1.printStackTrace();
 								writer.println("\t\t\t<size>null</size>");
 							}
 						}
 					writer.println("\t\t</linkToResource>");
 				}	
-				for(int i=0;i<resource_sizes.size();i++)
-				{
-					System.out.println(i+")"+resource_sizes.get(i));
-				}
 				
 			writer.println("\t</aggregation>");
 			
@@ -1351,7 +1355,7 @@ public class CimmytWriter
 	        conn.setRequestMethod("HEAD");
 	        conn.getInputStream();
 	        
-	        System.out.println("ResponseCode:"+conn.getResponseCode());
+	        //System.out.println("ResponseCode:"+conn.getResponseCode());
 	        if(conn.getResponseCode()==200)
 	        	return conn.getContentLength();
 	        return -1;

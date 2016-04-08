@@ -1,8 +1,11 @@
 package com.agroknow.cimmyt.external;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -73,7 +76,7 @@ public class Freme
 			return null;
 		}
 	    
-	    System.out.println(responseStrBuilder);
+	    //System.out.println(responseStrBuilder);
 	    
 	    switch (responseCode) {
 			case 200:
@@ -161,18 +164,18 @@ public class Freme
 										
 										if(k==subjects.size())
 											subjects.add(subject);
-										System.out.println(subject.value+", score:"+subject.score);
+										//System.out.println(subject.value+", score:"+subject.score);
 									}
 								}
 							}
 							catch(java.lang.NumberFormatException e)
 							{
-								e.printStackTrace();
+								//e.printStackTrace();
 								continue;
 							}
 							catch(org.codehaus.jettison.json.JSONException e)
 							{
-								e.printStackTrace();
+								//e.printStackTrace();
 								continue;
 							}
 						}
@@ -195,7 +198,7 @@ public class Freme
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld&language=en&"
 						+ "dataset="+dataset+"&mode=all";
 		
-		System.out.println("FREME:"+uri);
+		//System.out.println("FREME:"+uri);
 		/*String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"
 						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
@@ -209,7 +212,7 @@ public class Freme
 			connection = (HttpURLConnection) url.openConnection();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 		connection.setRequestMethod("POST");
@@ -243,7 +246,7 @@ public class Freme
 			return null;
 		}
 	    
-	    System.out.println(responseStrBuilder);
+	    //System.out.println(responseStrBuilder);
 	    
 	    switch (responseCode) 
 	    {
@@ -259,6 +262,17 @@ public class Freme
 						if(score>=0.6)
 						{
 							String orcid=root.getString("taIdentRef");
+							
+							try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
+								    BufferedWriter bw = new BufferedWriter(fw);
+								    PrintWriter out = new PrintWriter(bw))
+								{
+								    out.println(value+";"+uri+";"+orcid+";"+score);
+								} catch (IOException e) {
+								    //exception handling left as an exercise for the reader
+								}
+							
+							System.out.println(value+";"+uri+";"+orcid+";"+score);
 							return orcid;
 						}
 						
@@ -266,6 +280,16 @@ public class Freme
 					
 				}
 	    }
+	    System.out.println(value+";"+uri+";null;null");
+	    try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    PrintWriter out = new PrintWriter(bw))
+			{
+			    out.println(value+";"+uri+";null;null");
+			} catch (IOException e) {
+			    //exception handling left as an exercise for the reader
+			}
+		
 	    return null;
 	}
 
@@ -276,7 +300,7 @@ public class Freme
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld&language=en&"
 						+ "dataset="+dataset+"&mode=all";
 		
-		System.out.println("FREME:"+uri);
+		//System.out.println("FREME:"+uri);
 		/*String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"
 						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
@@ -311,7 +335,7 @@ public class Freme
 			    responseStrBuilder.append(inputStr);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 		
@@ -320,11 +344,11 @@ public class Freme
 			responseCode = connection.getResponseCode();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	    
-	    System.out.println(responseStrBuilder);
+	    //System.out.println(responseStrBuilder);
 	    
 	    switch (responseCode) 
 	    {

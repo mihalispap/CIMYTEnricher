@@ -383,7 +383,7 @@ public class CimmytRecord {
     	s.score=Double.valueOf(subject.score);
     	
     	this.subject.add(s);
-    	System.out.println("---ADD---\n"+this.subject.get(this.subject.size()-1).value+"\n-----\n");
+    	//System.out.println("---ADD---\n"+this.subject.get(this.subject.size()-1).value+"\n-----\n");
     	//this.subject.add(subject);
     }
     

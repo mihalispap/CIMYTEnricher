@@ -142,13 +142,13 @@ public class Enrich {
 					fhElement = (JAXBElement<?>)u.unmarshal(new FileInputStream(listOfFiles[i].getAbsolutePath()));
 	
 					CimmytRecord record = (CimmytRecord) fhElement.getValue();
-			        System.out.println(record.getApiid());
+			        //System.out.println(record.getApiid());
 			        
 			        CimmytEnrich enricher=new CimmytEnrich();
 			        try {
 						enricher.enrich(record);
 						
-						System.out.println(record.getLinkToResourceSize());
+						//System.out.println(record.getLinkToResourceSize());
 						
 						
 						
