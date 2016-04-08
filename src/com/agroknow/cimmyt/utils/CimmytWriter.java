@@ -179,9 +179,9 @@ public class CimmytWriter
 							}
 							else
 							{
-								writer.println("\t\t<uri>null</uri>");
-								writer.println("\t\t<vocabulary>null</vocabulary>");
-								writer.println("\t\t<score>null</score>");
+								writer.println("\t\t<uri></uri>");
+								writer.println("\t\t<vocabulary></vocabulary>");
+								writer.println("\t\t<score></score>");
 							}
 						}
 						catch(java.lang.NullPointerException e)
@@ -201,16 +201,16 @@ public class CimmytWriter
 					}
 					else
 					{
-						writer.println("\t\t<uri>null</uri>");
-						writer.println("\t\t<vocabulary>null</vocabulary>");
-						writer.println("\t\t<score>null</score>");
+						writer.println("\t\t<uri></uri>");
+						writer.println("\t\t<vocabulary></vocabulary>");
+						writer.println("\t\t<score></score>");
 					}
 				}
 				catch(java.lang.NullPointerException e)
 				{
-					writer.println("\t\t<uri>null</uri>");
-					writer.println("\t\t<vocabulary>null</vocabulary>");
-					writer.println("\t\t<score>null</score>");
+					writer.println("\t\t<uri></uri>");
+					writer.println("\t\t<vocabulary></vocabulary>");
+					writer.println("\t\t<score></score>");
 					
 				}
 			writer.println("\t</subject>");
@@ -712,18 +712,18 @@ public class CimmytWriter
 				
 				writer.println("\t<title>");
 					writer.println("\t\t<value>"+person.name+"</value>");
-					writer.println("\t\t<lang/>");
+					writer.println("\t\t<lang></lang>");
 				writer.println("\t</title>");
-
-				writer.println("\t<description/>");
-				writer.println("\t<subject/>");
 				
 				writer.println("\t<appid>"+person.id+"</appid>");
 				writer.println("\t<appuri>/cimmyt/person/"+person.id+"</appuri>");
 				
-				writer.println("\t<language/>");
-				writer.println("\t<created/>");
-				writer.println("\t<updated/>");
+				writer.println("\t<description>\n\t\t<value></value>\n\t\t<lang></lang></description>");
+				writer.println("\t<subject>\n\t\t<value></value><uri></uri><vocabulary></vocabulary>"
+						+ "<score></score></subject>");
+				writer.println("\t<language><uri></uri><value</value></language>");
+				writer.println("\t<created></created>");
+				writer.println("\t<updated></updated>");
 				
 			writer.println("</object>");
 			writer.close();
@@ -892,18 +892,19 @@ public class CimmytWriter
 				
 				writer.println("\t<title>");
 					writer.println("\t\t<value>"+organization.name+"</value>");
-					writer.println("\t\t<lang/>");
+					writer.println("\t\t<lang></lang>");
 				writer.println("\t</title>");
 
-				writer.println("\t<description/>");
-				writer.println("\t<subject/>");
 				
 				writer.println("\t<appid>"+organization.id+"</appid>");
 				writer.println("\t<appuri>/cimmyt/organization/"+organization.id+"</appuri>");
 				
-				writer.println("\t<language/>");
-				writer.println("\t<created/>");
-				writer.println("\t<updated/>");
+				writer.println("\t<description>\n\t\t<value></value>\n\t\t<lang></lang></description>");
+				writer.println("\t<subject>\n\t\t<value></value><uri></uri><vocabulary></vocabulary>"
+						+ "<score></score></subject>");
+				writer.println("\t<language></language>");
+				writer.println("\t<created></created>");
+				writer.println("\t<updated></updated>");
 				
 			writer.println("</object>");
 			writer.close();
@@ -1019,22 +1020,23 @@ public class CimmytWriter
 				
 				writer.println("\t<title>");
 					writer.println("\t\t<value>"+collection.name+"</value>");
-					writer.println("\t\t<lang/>");
+					writer.println("\t\t<lang></lang>");
 				writer.println("\t</title>");
 
 				writer.println("\t<description>");
 					writer.println("\t\t<value>"+collection.description+"</value>");
-					writer.println("\t\t<lang/>");
+					writer.println("\t\t<lang></lang>");
 				writer.println("\t</description>");
 					
-				writer.println("\t<subject/>");
 				
 				writer.println("\t<appid>"+collection.id+"</appid>");
 				writer.println("\t<appuri>/cimmyt/collection/"+collection.id+"</appuri>");
 				
-				writer.println("\t<language/>");
-				writer.println("\t<created/>");
-				writer.println("\t<updated/>");
+				writer.println("\t<subject>\n\t\t<value></value><uri></uri><vocabulary></vocabulary>"
+						+ "<score></score></subject>");
+				writer.println("\t<language></language>");
+				writer.println("\t<created></created>");
+				writer.println("\t<updated></updated>");
 				
 			writer.println("</object>");
 			writer.close();
