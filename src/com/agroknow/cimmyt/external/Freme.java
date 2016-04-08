@@ -29,7 +29,7 @@ public class Freme
 	
 	public List<CimmytSubject> enrichSubjects(String value) throws MalformedURLException, UnsupportedEncodingException, ProtocolException, JSONException
 	{
-		String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
+		String uri = "http://api.freme-project.eu/current/e-terminology/tilde?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"
 						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
 	
@@ -194,11 +194,11 @@ public class Freme
 	public String enrichPersons(String value) throws JSONException, UnsupportedEncodingException, MalformedURLException, ProtocolException
 	{
 		String dataset="orcid";
-		String uri = "http://api-dev.freme-project.eu/current/e-entity/freme-ner/documents?"
+		String uri = "http://api.freme-project.eu/current/e-entity/freme-ner/documents?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld&language=en&"
 						+ "dataset="+dataset+"&mode=all";
 		
-		//System.out.println("FREME:"+uri);
+		System.out.println("FREME:"+uri);
 		/*String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"
 						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
@@ -253,23 +253,34 @@ public class Freme
 			case 200:
 				JSONObject root = new JSONObject(responseStrBuilder.toString());
 				//JSONArray annotations = root;
+				//System.out.println("My test");
 				if ( root !=null ) 
 				{
+					//System.out.println("My test2");
 					if (root.has("itsrdf:taConfidence"))
 					{
 						double score=Double.valueOf(root.getString("itsrdf:taConfidence"));
-						
+						//System.out.println("My test3");
 						if(score>=0.6)
 						{
-							String orcid=root.getString("taIdentRef");
-							
+							String orcid;
+							try
+							{
+								orcid=root.getString("taIdentRef");
+							}
+							catch(Exception e)
+							{
+								orcid="";
+							}
+							//System.out.println("My test4");
 							try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
 								    BufferedWriter bw = new BufferedWriter(fw);
 								    PrintWriter out = new PrintWriter(bw))
 								{
-								    out.println(value+";"+uri+";"+orcid+";"+score);
+								    out.print(value+";"+uri+";"+orcid+";"+score);
 								} catch (IOException e) {
 								    //exception handling left as an exercise for the reader
+									
 								}
 							
 							System.out.println(value+";"+uri+";"+orcid+";"+score);
@@ -285,9 +296,10 @@ public class Freme
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 			{
-			    out.println(value+";"+uri+";null;null");
+			    out.print(value+";"+uri+";null;null");
 			} catch (IOException e) {
 			    //exception handling left as an exercise for the reader
+				
 			}
 		
 	    return null;
@@ -296,7 +308,7 @@ public class Freme
 	public String enrichOrganizations(String value) throws JSONException, UnsupportedEncodingException, MalformedURLException, ProtocolException
 	{
 		String dataset="viaf";
-		String uri = "http://api-dev.freme-project.eu/current/e-entity/freme-ner/documents?"
+		String uri = "http://api.freme-project.eu/current/e-entity/freme-ner/documents?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld&language=en&"
 						+ "dataset="+dataset+"&mode=all";
 		

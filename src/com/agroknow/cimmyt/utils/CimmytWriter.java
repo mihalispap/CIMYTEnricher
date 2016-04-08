@@ -1,11 +1,14 @@
 package com.agroknow.cimmyt.utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -101,7 +104,7 @@ public class CimmytWriter
 		for(int i=0;i<descrs.size();i++)
 		{
 			writer.println("\t<description>");
-				writer.println("\t\t<value>"+descrs.get(i).getValue()+"</value>");
+				writer.println("\t\t<value><![CDATA["+descrs.get(i).getValue()+"]]></value>");
 				
 				try
 				{
@@ -118,17 +121,24 @@ public class CimmytWriter
 				catch(java.lang.IndexOutOfBoundsException e)
 				{
 					e.printStackTrace();
+					writer.println("\t\t<lang/>");
 				}
 			writer.println("\t</description>");
 		}
+		
+		if(descrs.size()==0)
+		{
+			writer.println("\t<description>\n\t\t<value></value>\n\t\t<lang></lang></description>");
+		}
+		
 		//writer.println("\t</descriptions>");
 
 		//if(1==1)
 		//	return;
 		
 		String uri=record.getApiid();
-		writer.println("\t<id>"+uri+"</id>");
-		writer.println("\t<uri>/cimmyt/"+type+"/"+uri+"</uri>");
+		writer.println("\t<appid>"+uri+"</appid>");
+		writer.println("\t<appuri>/cimmyt/"+type+"/"+uri+"</appuri>");
 		//if(1==1)
 		//	return;
 		
@@ -167,6 +177,12 @@ public class CimmytWriter
 								writer.println("\t\t<vocabulary>"+subjects.get(j).getVocabulary().toLowerCase()+"</vocabulary>");
 								writer.println("\t\t<score>"+subjects.get(j).getScore()+"</score>");
 							}
+							else
+							{
+								writer.println("\t\t<uri>null</uri>");
+								writer.println("\t\t<vocabulary>null</vocabulary>");
+								writer.println("\t\t<score>null</score>");
+							}
 						}
 						catch(java.lang.NullPointerException e)
 						{
@@ -183,12 +199,28 @@ public class CimmytWriter
 						writer.println("\t\t<vocabulary>"+subjects.get(i).getVocabulary()+"</vocabulary>");
 						writer.println("\t\t<score>"+subjects.get(i).getScore()+"</score>");
 					}
+					else
+					{
+						writer.println("\t\t<uri>null</uri>");
+						writer.println("\t\t<vocabulary>null</vocabulary>");
+						writer.println("\t\t<score>null</score>");
+					}
 				}
 				catch(java.lang.NullPointerException e)
 				{
+					writer.println("\t\t<uri>null</uri>");
+					writer.println("\t\t<vocabulary>null</vocabulary>");
+					writer.println("\t\t<score>null</score>");
 					
 				}
 			writer.println("\t</subject>");
+		}
+		
+
+		if(subjects.size()==0)
+		{
+			writer.println("\t<subject>\n\t\t<value></value>\n\t\t<uri></uri>"
+					+ "<vocabulary></vocabulary><score></score></subject>");
 		}
 		
 		
@@ -202,12 +234,21 @@ public class CimmytWriter
 			writer.println("\t</language>");
 		}
 		
+		if(langs.size()==0)
+		{
+			writer.println("\t<language>\n\t\t<value></value>\n\t\t<uri></uri>"
+					+ "</language>");
+		}	
+		
 		List<XMLGregorianCalendar> created=record.getDate();
 		for(int i=0;i<created.size();i++)
 		{
 			String date=created.get(i).toString();
 			writer.println("\t<created>"+date+"</created>");
 		}
+		if(created.size()==0)
+			writer.println("<created></created>");
+		
 		
 		XMLGregorianCalendar updated=record.getUpdatedDate();
 		writer.println("\t<updated>"+updated+"</updated>");
@@ -232,8 +273,8 @@ public class CimmytWriter
 				writer.println("\t<type>"+types.get(i)+"</type>");
 			}
 		
-			writer.println("\t<id>"+record.getApiid()+"</id>");
-			writer.println("\t<uri>/cimmyt/resource/"+record.getApiid()+"</uri>");
+			writer.println("\t<appid>"+record.getApiid()+"</appid>");
+			writer.println("\t<appuri>/cimmyt/resource/"+record.getApiid()+"</appuri>");
 			
 			List<String> creators=new ArrayList<String>();
 			creators=record.getCreator();
@@ -327,10 +368,17 @@ public class CimmytWriter
 			
 			for(int i=0;i<urls.size();i++)
 			{
-				boolean broken=exists(urls.get(i));
+				boolean broken;
+				try {
+					broken = exists(urls.get(i));
+				} catch (ConnectException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					broken=true;
+				}
 				writer.println("\t<url>");
 					writer.println("\t\t<value>"+urls.get(i)+"</value>");
-					writer.println("\t\t<broken>"+broken+"</id>");
+					writer.println("\t\t<broken>"+broken+"</broken>");
 				writer.println("\t</url>");
 			}
 
@@ -342,9 +390,18 @@ public class CimmytWriter
 				base_url="http://data.cimmyt.org/dvn/dv/seedsofdiscoverydvn/faces/study/StudyPage.xhtml?globalId=hdl:";
 			
 			writer.println("\t<url>");
+			try
+			{
 				writer.println("\t\t<value>"+base_url+record.getDomainid().get(0)+
 						"/"+record.getCdocid().get(0)+"</value>");
-				writer.println("\t\t<broken>false</id>");
+				writer.println("\t\t<broken>false</broken>");
+			}
+			catch(java.lang.IndexOutOfBoundsException e)
+			{
+				e.printStackTrace();
+				writer.println("\t\t<value>null</value>");
+				//writer.println("\t\t<broken>false</broken>");
+			}
 			writer.println("\t</url>");
 			
 			List<String> locations=new ArrayList<String>();
@@ -504,7 +561,14 @@ public class CimmytWriter
 					}
 					if(k!=i)
 						continue;
-					boolean broken=exists(resource_links.get(i));
+					boolean broken;
+					try {
+						broken = exists(resource_links.get(i));
+					} catch (ConnectException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+						broken=true;
+					}
 					writer.println("\t\t<shownBy>");
 						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
 						writer.println("\t\t\t<broken>"+broken+"</broken>");
@@ -654,8 +718,8 @@ public class CimmytWriter
 				writer.println("\t<description/>");
 				writer.println("\t<subject/>");
 				
-				writer.println("\t<id>"+person.id+"</id>");
-				writer.println("\t<uri>/cimmyt/person/"+person.id+"</uri>");
+				writer.println("\t<appid>"+person.id+"</appid>");
+				writer.println("\t<appuri>/cimmyt/person/"+person.id+"</appuri>");
 				
 				writer.println("\t<language/>");
 				writer.println("\t<created/>");
@@ -696,6 +760,8 @@ public class CimmytWriter
 			}
 			
 			Freme freme_enricher=new Freme();
+			
+			
 			person.orcid="null";
 			try {
 				List<String> locations=record.getLocation();
@@ -703,9 +769,21 @@ public class CimmytWriter
 				
 				for(int j=0;j<locations.size();j++)
 					compact_locs+=locations.get(j)+" ";
+
+				try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
+					    BufferedWriter bw = new BufferedWriter(fw);
+					    PrintWriter out = new PrintWriter(bw))
+					{
+					    out.print(person.first_name+" "
+								+person.last_name+";");
+					} catch (IOException e) {
+					    //exception handling left as an exercise for the reader
+					}
 				
 				person.orcid=freme_enricher.enrichPersons(person.first_name+" "
 						+person.last_name+" "+person.affiliation_name);
+				
+				//System.exit(1);
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
@@ -718,6 +796,16 @@ public class CimmytWriter
 				//e.printStackTrace();
 			}
 			
+			try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
+				    BufferedWriter bw = new BufferedWriter(fw);
+				    PrintWriter out = new PrintWriter(bw))
+				{
+				    out.println(";");
+				    //System.exit(1);
+				} catch (IOException e) {
+				    //exception handling left as an exercise for the reader
+				}
+			
 			writer.println("<person>");
 			
 				writer.println("\t<fullName>"+person.name+"</fullName>");
@@ -727,8 +815,8 @@ public class CimmytWriter
 				int pid=person.name.hashCode();
 				if(pid<0)
 					pid*=-1;
-				writer.println("\t<id>"+pid+"</id>");
-				writer.println("\t<uri>/cimmyt/person/"+pid+"</uri>");
+				writer.println("\t<appid>"+pid+"</appid>");
+				writer.println("\t<appuri>/cimmyt/person/"+pid+"</appuri>");
 				
 				writer.println("\t<orcid>"+person.orcid+"</orcid>");
 				
@@ -810,8 +898,8 @@ public class CimmytWriter
 				writer.println("\t<description/>");
 				writer.println("\t<subject/>");
 				
-				writer.println("\t<id>"+organization.id+"</id>");
-				writer.println("\t<uri>/cimmyt/organization/"+organization.id+"</uri>");
+				writer.println("\t<appid>"+organization.id+"</appid>");
+				writer.println("\t<appuri>/cimmyt/organization/"+organization.id+"</appuri>");
 				
 				writer.println("\t<language/>");
 				writer.println("\t<created/>");
@@ -846,8 +934,8 @@ public class CimmytWriter
 				int pid=organization.name.hashCode();
 				if(pid<0)
 					pid*=-1;
-				writer.println("\t<id>"+pid+"</id>");
-				writer.println("\t<uri>/cimmyt/organization/"+pid+"</uri>");
+				writer.println("\t<appid>"+pid+"</appid>");
+				writer.println("\t<appuri>/cimmyt/organization/"+pid+"</appuri>");
 				
 				writer.println("\t<viaf>"+organization.viaf+"</viaf>");
 				
@@ -941,8 +1029,8 @@ public class CimmytWriter
 					
 				writer.println("\t<subject/>");
 				
-				writer.println("\t<id>"+collection.id+"</id>");
-				writer.println("\t<uri>/cimmyt/collection/"+collection.id+"</uri>");
+				writer.println("\t<appid>"+collection.id+"</appid>");
+				writer.println("\t<appuri>/cimmyt/collection/"+collection.id+"</appuri>");
 				
 				writer.println("\t<language/>");
 				writer.println("\t<created/>");
@@ -956,8 +1044,8 @@ public class CimmytWriter
 			
 			writer.println("<collection>");
 			
-				writer.println("\t<id>"+collection.id+"</id>");
-				writer.println("\t<uri>/cimmyt/collection/"+collection.id+"</uri>");
+				writer.println("\t<appid>"+collection.id+"</appid>");
+				writer.println("\t<appuri>/cimmyt/collection/"+collection.id+"</appuri>");
 				
 				writer.println("\t<name>"+collection.name+"</name>");
 				writer.println("\t<spec>"+collection.spec+"</spec>");
@@ -995,8 +1083,8 @@ public class CimmytWriter
 			for(int i=0;i<types.size();i++)
 				writer.println("\t<type>"+types.get(i)+"</type>");
 		
-			writer.println("\t<id>"+record.getApiid()+"</id>");
-			writer.println("\t<uri>/cimmyt/dataset_software/"+record.getApiid()+"</uri>");
+			writer.println("\t<appid>"+record.getApiid()+"</appid>");
+			writer.println("\t<appuri>/cimmyt/dataset_software/"+record.getApiid()+"</appuri>");
 			
 			List<String> creators=new ArrayList<String>();
 			creators=record.getCreator();
@@ -1045,10 +1133,16 @@ public class CimmytWriter
 			
 			for(int i=0;i<urls.size();i++)
 			{
-				boolean broken=exists(urls.get(i));
+				boolean broken;
+				try {
+					broken = exists(urls.get(i));
+				} catch (ConnectException e) {
+					// TODO Auto-generated catch block
+					broken=true;
+				}
 				writer.println("\t<url>");
 					writer.println("\t\t<value>"+urls.get(i)+"</value>");
-					writer.println("\t\t<broken>"+broken+"</id>");
+					writer.println("\t\t<broken>"+broken+"</broken>");
 				writer.println("\t</url>");
 			}
 
@@ -1062,7 +1156,7 @@ public class CimmytWriter
 			writer.println("\t<url>");
 				writer.println("\t\t<value>"+base_url+record.getDomainid().get(0)+
 						"/"+record.getCdocid().get(0)+"</value>");
-				writer.println("\t\t<broken>false</id>");
+				writer.println("\t\t<broken>false</broken>");
 			writer.println("\t</url>");
 
 			List<String> locations=new ArrayList<String>();
@@ -1240,7 +1334,17 @@ public class CimmytWriter
 					}
 					if(k!=i)
 						continue;
-					boolean broken=exists(resource_links.get(i));
+					
+					boolean broken;
+					try
+					{
+						broken=exists(resource_links.get(i));
+					}
+					catch(java.net.ConnectException e)
+					{
+						broken=true;
+					}
+					
 					writer.println("\t\t<shownBy>");
 						writer.println("\t\t\t<value>"+resource_links.get(i)+"</value>");
 						writer.println("\t\t\t<broken>"+broken+"</broken>");
@@ -1331,7 +1435,7 @@ public class CimmytWriter
 		writer.close();
 	}
 	
-	public static boolean exists(String URLName){
+	public static boolean exists(String URLName) throws java.net.ConnectException{
 	    try {
 	      HttpURLConnection.setFollowRedirects(false);
 	      // note : you may also need
