@@ -213,7 +213,7 @@ public class Freme
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			return null;
+			return "";
 		}
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
@@ -224,7 +224,7 @@ public class Freme
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			return null;
+			return "";
 		} 
 		StringBuilder responseStrBuilder = new StringBuilder();
 		String inputStr;
@@ -234,7 +234,7 @@ public class Freme
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			return "";
 		}
 		
 	    int responseCode;
@@ -243,7 +243,7 @@ public class Freme
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			return "";
 		}
 	    
 	    //System.out.println(responseStrBuilder);
@@ -302,7 +302,7 @@ public class Freme
 				
 			}
 		
-	    return null;
+	    return "";
 	}
 
 	public String enrichOrganizations(String value) throws JSONException, UnsupportedEncodingException, MalformedURLException, ProtocolException
@@ -327,7 +327,7 @@ public class Freme
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			return "";
 		}
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
@@ -338,7 +338,7 @@ public class Freme
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			return null;
+			return "";
 		} 
 		StringBuilder responseStrBuilder = new StringBuilder();
 		String inputStr;
@@ -348,7 +348,7 @@ public class Freme
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			return null;
+			return "";
 		}
 		
 	    int responseCode;
@@ -357,7 +357,7 @@ public class Freme
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			return null;
+			return "";
 		}
 	    
 	    //System.out.println(responseStrBuilder);
@@ -383,7 +383,7 @@ public class Freme
 					
 				}
 	    }
-	    return null;
+	    return "";
 	}
 	
 }
