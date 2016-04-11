@@ -237,7 +237,14 @@ public class CimmytWriter
 		{
 			writer.println("\t<language>");
 				writer.println("\t\t<value>"+langs.get(i)+"</value>");
-				writer.println("\t\t<uri>"+lexvos.get(i)+"</uri>");
+				try
+				{
+					writer.println("\t\t<uri>"+lexvos.get(i)+"</uri>");
+				}
+				catch(java.lang.IndexOutOfBoundsException e)
+				{
+					writer.println("\t\t<uri></uri>");
+				}
 			writer.println("\t</language>");
 		}
 		
@@ -439,7 +446,7 @@ public class CimmytWriter
 			if(record.getHandler().contains("repository"))
 				base_url="http://repository.cimmyt.org/xmlui/handle/";
 			else if(record.getHandler().contains("data.cimmyt"))
-				base_url="http://data.cimmyt.org/dvn/dv/seedsofdiscoverydvn/faces/study/StudyPage.xhtml?globalId=hdl:";
+				base_url="http://data.cimmyt.org/dvn/study?globalId=hdl:";
 			
 			writer.println("\t<url>");
 			try
@@ -652,8 +659,8 @@ public class CimmytWriter
 			writer.println("\t<aggregation>");
 				
 				writer.println("\t\t<shownAt>");
-					writer.println("\t\t\t<value>"+record.getHandler()+record.getDomainid().get(0)+
-						"/"+record.getCdocid().get(0)+"</value>");
+					writer.println("\t\t\t<value>"+base_url+record.getDomainid().get(0)+
+							"/"+record.getCdocid().get(0)+"</value>");
 					writer.println("\t\t\t<broken>false</broken>");
 				writer.println("\t\t</shownAt>");
 				
@@ -682,6 +689,11 @@ public class CimmytWriter
 					writer.println("\t\t</shownBy>");
 				}
 				
+				if(resource_links.size()==0)
+				{
+					writer.println("\t<shownBy><value></value><broken></broken></shownBy>");
+				}
+				
 				for(int i=0;i<resource_links.size();i++)
 				{
 
@@ -703,7 +715,7 @@ public class CimmytWriter
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
-							writer.println("\t\t\t<label>null</label>");
+							writer.println("\t\t\t<label></label>");
 						}
 						try
 						{
@@ -711,7 +723,7 @@ public class CimmytWriter
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
-							writer.println("\t\t\t<category>null</category>");
+							writer.println("\t\t\t<category></category>");
 						}
 						try
 						{
@@ -719,7 +731,7 @@ public class CimmytWriter
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
-							writer.println("\t\t\t<type>null</type>");
+							writer.println("\t\t\t<type></type>");
 						}
 						try
 						{
@@ -739,11 +751,20 @@ public class CimmytWriter
 							} catch (MalformedURLException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
-								writer.println("\t\t\t<size>null</size>");
+								writer.println("\t\t\t<size></size>");
 							}
 						}
 					writer.println("\t\t</linkToResource>");
 				}	
+
+				if(resource_links.size()==0)
+				{
+					writer.println("\t<linkToResource><value></value><label></label>"
+							+ "<category></category><type></type><size></size>"
+							+ "</linkToResource>");
+				}
+				
+				
 				/*for(int i=0;i<resource_sizes.size();i++)
 				{
 					System.out.println(i+")"+resource_sizes.get(i));
@@ -764,6 +785,12 @@ public class CimmytWriter
 				writer.println("\t</collection>");
 			}
 			
+			if(resource_links.size()==0)
+			{
+				writer.println("\t<collection><id></id><uri></uri>"
+						+ "<type></type>"
+						+ "</collection>");
+			}
 			
 			
 		writer.println("</resource>");
@@ -822,7 +849,7 @@ public class CimmytWriter
 					writer.println("\t\t<lang></lang>");
 				writer.println("\t</title>");
 				
-				writer.println("\t<appid>"+person.id+"</appid>");
+				writer.println("\t<appid>"+String.valueOf(person.id)+"</appid>");
 				writer.println("\t<appuri>/cimmyt/person/"+person.id+"</appuri>");
 				
 				writer.println("\t<description>\n\t\t<value></value>\n\t\t<lang></lang></description>");
@@ -877,7 +904,7 @@ public class CimmytWriter
 				for(int j=0;j<locations.size();j++)
 					compact_locs+=locations.get(j)+" ";
 
-				try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
+				/*try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
 					    BufferedWriter bw = new BufferedWriter(fw);
 					    PrintWriter out = new PrintWriter(bw))
 					{
@@ -886,7 +913,7 @@ public class CimmytWriter
 					} catch (IOException e) {
 					    //exception handling left as an exercise for the reader
 					}
-				
+				*/
 				person.orcid=freme_enricher.enrichPersons(person.first_name+" "
 						+person.last_name+" "+person.affiliation_name);
 				
@@ -915,7 +942,7 @@ public class CimmytWriter
 				//e.printStackTrace();
 			}
 			
-			try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
+			/*try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
 				    BufferedWriter bw = new BufferedWriter(fw);
 				    PrintWriter out = new PrintWriter(bw))
 				{
@@ -923,7 +950,7 @@ public class CimmytWriter
 				    //System.exit(1);
 				} catch (IOException e) {
 				    //exception handling left as an exercise for the reader
-				}
+				}*/
 			
 			writer.println("<person>");
 			
@@ -934,7 +961,7 @@ public class CimmytWriter
 				int pid=person.name.hashCode();
 				if(pid<0)
 					pid*=-1;
-				writer.println("\t<appid>"+pid+"</appid>");
+				writer.println("\t<appid>"+String.valueOf(pid)+"</appid>");
 				writer.println("\t<appuri>/cimmyt/person/"+pid+"</appuri>");
 				
 				writer.println("\t<orcid>"+person.orcid+"</orcid>");
@@ -1018,7 +1045,7 @@ public class CimmytWriter
 				writer.println("\t</title>");
 
 				
-				writer.println("\t<appid>"+organization.id+"</appid>");
+				writer.println("\t<appid>"+String.valueOf(organization.id)+"</appid>");
 				writer.println("\t<appuri>/cimmyt/organization/"+organization.id+"</appuri>");
 				
 				writer.println("\t<description>\n\t\t<value></value>\n\t\t<lang></lang></description>");
@@ -1057,7 +1084,7 @@ public class CimmytWriter
 				int pid=organization.name.hashCode();
 				if(pid<0)
 					pid*=-1;
-				writer.println("\t<appid>"+pid+"</appid>");
+				writer.println("\t<appid>"+String.valueOf(pid)+"</appid>");
 				writer.println("\t<appuri>/cimmyt/organization/"+pid+"</appuri>");
 				
 				writer.println("\t<viaf>"+organization.viaf+"</viaf>");
@@ -1159,7 +1186,7 @@ public class CimmytWriter
 				writer.println("\t</description>");
 					
 				
-				writer.println("\t<appid>"+collection.id+"</appid>");
+				writer.println("\t<appid>"+String.valueOf(collection.id)+"</appid>");
 				writer.println("\t<appuri>/cimmyt/collection/"+collection.id+"</appuri>");
 				
 				writer.println("\t<subject>\n\t\t<value></value><uri></uri><vocabulary></vocabulary>"
@@ -1176,7 +1203,7 @@ public class CimmytWriter
 			
 			writer.println("<collection>");
 			
-				writer.println("\t<appid>"+collection.id+"</appid>");
+				writer.println("\t<appid>"+String.valueOf(collection.id)+"</appid>");
 				writer.println("\t<appuri>/cimmyt/collection/"+collection.id+"</appuri>");
 				
 				writer.println("\t<name>"+collection.name+"</name>");
@@ -1215,6 +1242,10 @@ public class CimmytWriter
 			for(int i=0;i<types.size();i++)
 				writer.println("\t<type>"+types.get(i)+"</type>");
 		
+			//int rid=record.getApiid().hashCode();
+			//if(rid<0)
+			//	rid*=-1;
+			
 			writer.println("\t<appid>"+record.getApiid()+"</appid>");
 			writer.println("\t<appuri>/cimmyt/dataset_software/"+record.getApiid()+"</appuri>");
 			
