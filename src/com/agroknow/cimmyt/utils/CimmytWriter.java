@@ -1242,6 +1242,9 @@ public class CimmytWriter
 			for(int i=0;i<types.size();i++)
 				writer.println("\t<type>"+types.get(i)+"</type>");
 		
+			if(types.size()==0)
+				writer.println("\t<type></type>");
+			
 			//int rid=record.getApiid().hashCode();
 			//if(rid<0)
 			//	rid*=-1;
@@ -1265,6 +1268,9 @@ public class CimmytWriter
 					writer.println("\t\t<type>person</type>");
 				writer.println("\t</creator>");
 			}
+
+			if(creators.size()==0)
+				writer.println("\t<creator><value></value><id></id><uri></uri><type></type></creator>");
 			
 			List<String> distributors=new ArrayList<String>();
 			distributors=record.getPublisher();
@@ -1283,6 +1289,9 @@ public class CimmytWriter
 				writer.println("\t</publisher>");
 			}
 			
+			if(distributors.size()==0)
+				writer.println("\t<publisher><value></value><id></id><uri></uri><type></type></publisher>");
+			
 			List<XMLGregorianCalendar> dates=new ArrayList<XMLGregorianCalendar>();
 			dates=record.getPubDate();
 			
@@ -1291,6 +1300,9 @@ public class CimmytWriter
 				writer.println("\t<date>"+dates.get(i)+"</date>");
 			}
 
+			if(dates.size()==0)
+				writer.println("\t<date></date>");
+			
 			List<String> urls=new ArrayList<String>();
 			urls=record.getUrl();
 			
@@ -1361,6 +1373,11 @@ public class CimmytWriter
 				writer.println("\t</location>");
 			}
 
+			if(locations.size()==0)
+			{
+				writer.println("\t<location><value></value><uri></uri><vocabulary></vocabulary></location>");
+			}
+			
 			List<String> regions=new ArrayList<String>();
 			regions=record.getRegion();
 			
@@ -1369,7 +1386,9 @@ public class CimmytWriter
 				writer.println("\t<coverage>"+regions.get(i)+"</coverage>");
 			}
 
-
+			if(regions.size()==0)
+				writer.println("\t<coverage></coverage>");
+			
 			List<String> rights=new ArrayList<String>();
 			rights=record.getRights();
 			
@@ -1378,6 +1397,11 @@ public class CimmytWriter
 				writer.println("\t<rights>"+rights.get(i).replaceAll("\\<.*?>","")+"</rights>");
 			}
 
+			if(rights.size()==0)
+			{
+				writer.println("\t<rights></rights>");
+			}
+			
 			List<String> citations=new ArrayList<String>();
 			citations=record.getCitation();
 			
@@ -1386,6 +1410,9 @@ public class CimmytWriter
 				writer.println("\t<citation>"+citations.get(i)+"</citation>");
 			}
 
+			if(citations.size()==0)
+				writer.println("\t<citation></citation>");
+			
 			CimmytEnrich enricher=new CimmytEnrich();
 			String kind_of_data="";
 			try {
@@ -1451,6 +1478,9 @@ public class CimmytWriter
 				writer.println("\t<relation>"+value+"\t</relation>");
 			}
 			
+			if(relation_program.size()==0)
+				writer.println("\t<relation></relation>");
+			
 			String notes_tag="";
 			try
 			{
@@ -1462,6 +1492,8 @@ public class CimmytWriter
 			}
 			writer.println(notes_tag);
 			
+			if(notes_tag.equals("") || notes_tag.isEmpty())
+				writer.println("\t<notes></notes>");
 
 			List<String> resource_links=new ArrayList<String>();
 			resource_links=record.getLinkToResource();
@@ -1481,7 +1513,7 @@ public class CimmytWriter
 			writer.println("\t<aggregation>");
 				
 				writer.println("\t\t<shownAt>");
-					writer.println("\t\t\t<value>"+record.getHandler()+record.getDomainid().get(0)+
+					writer.println("\t\t\t<value>"+base_url+record.getDomainid().get(0)+
 						"/"+record.getCdocid().get(0)+"</value>");
 					writer.println("\t\t\t<broken>false</broken>");
 				writer.println("\t\t</shownAt>");
@@ -1514,6 +1546,9 @@ public class CimmytWriter
 					writer.println("\t\t</shownBy>");
 				}
 				
+				if(resource_links.size()==0)
+					writer.println("\t\t<shownBy><value></value><broken></broken></shownBy>");
+				
 				for(int i=0;i<resource_links.size();i++)
 				{
 
@@ -1535,7 +1570,7 @@ public class CimmytWriter
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
-							writer.println("\t\t\t<label>null</label>");
+							writer.println("\t\t\t<label></label>");
 						}
 						try
 						{
@@ -1543,7 +1578,7 @@ public class CimmytWriter
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
-							writer.println("\t\t\t<category>null</category>");
+							writer.println("\t\t\t<category></category>");
 						}
 						try
 						{
@@ -1551,7 +1586,7 @@ public class CimmytWriter
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
-							writer.println("\t\t\t<type>null</type>");
+							writer.println("\t\t\t<type></type>");
 						}
 						try
 						{
@@ -1571,12 +1606,15 @@ public class CimmytWriter
 							} catch (MalformedURLException e1) {
 								// TODO Auto-generated catch block
 								//e1.printStackTrace();
-								writer.println("\t\t\t<size>null</size>");
+								writer.println("\t\t\t<size></size>");
 							}
 						}
 					writer.println("\t\t</linkToResource>");
 				}	
 				
+				if(resource_links.size()==0)
+					writer.println("\t\t<linkToResource><value></value><label></label><category></category>"
+							+ "<type></type><size></size></linkToResource>");
 			writer.println("\t</aggregation>");
 			
 						
@@ -1592,6 +1630,8 @@ public class CimmytWriter
 				writer.println("\t</collection>");
 			}
 			
+			if(collections.size()==0)
+				writer.println("\t<collection><id></id><uri></uri><type></type></collection>");
 			
 			
 		writer.println("</dataset_software>");
