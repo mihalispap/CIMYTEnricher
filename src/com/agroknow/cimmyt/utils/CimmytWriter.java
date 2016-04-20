@@ -353,7 +353,7 @@ public class CimmytWriter
 					cid*=-1;
 				
 				writer.println("\t<publisher>");
-					writer.println("\t\t<value>"+publishers.get(i)+"</value>");
+					writer.println("\t\t<value><![CDATA["+publishers.get(i)+"]]></value>");
 					writer.println("\t\t<id>"+cid+"</id>");
 					writer.println("\t\t<uri>/cimmyt/organization/"+cid+"</uri>");
 					writer.println("\t\t<type>organization</type>");
@@ -1282,7 +1282,7 @@ public class CimmytWriter
 					cid*=-1;
 				
 				writer.println("\t<publisher>");
-					writer.println("\t\t<value>"+distributors.get(i)+"</value>");
+					writer.println("\t\t<value><![CDATA["+distributors.get(i)+"]]></value>");
 					writer.println("\t\t<id>"+cid+"</id>");
 					writer.println("\t\t<uri>/cimmyt/organization/"+cid+"</uri>");
 					writer.println("\t\t<type>organization</type>");

@@ -1682,6 +1682,8 @@ public class CimmytEnrich
         xpath = xPathfactory.newXPath();
         expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='country']"
         		+ "/element[@name='focus']/element[@name='en_US']/field[@name='value']");
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='country']"
+        		+ "/element[@name='focus']/element/field[@name='value']");
         
         nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
@@ -1697,6 +1699,8 @@ public class CimmytEnrich
         xpath = xPathfactory.newXPath();
         expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='region']"
         		+ "/element[@name='focus']/element[@name='en_US']/field[@name='value']");
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='region']"
+        		+ "/element[@name='focus']/element/field[@name='value']");
         
         nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
@@ -1712,6 +1716,8 @@ public class CimmytEnrich
         xpath = xPathfactory.newXPath();
         expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='series']"
         		+ "/element[@name='number']/element[@name='en_US']/field[@name='value']");
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='series']"
+        		+ "/element[@name='number']/element/field[@name='value']");
         
         nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
@@ -1727,6 +1733,8 @@ public class CimmytEnrich
         xpath = xPathfactory.newXPath();
         expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='place']"
         		+ "/element[@name='en_US']/field[@name='value']");
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='place']"
+        		+ "/element/field[@name='value']");
         
         nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
@@ -1742,6 +1750,8 @@ public class CimmytEnrich
         xpath = xPathfactory.newXPath();
         expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='pages']"
         		+ "/element[@name='en_US']/field[@name='value']");
+        expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/metadata/element[@name='dc']/element[@name='pages']"
+        		+ "/element/field[@name='value']");
         
         nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         
