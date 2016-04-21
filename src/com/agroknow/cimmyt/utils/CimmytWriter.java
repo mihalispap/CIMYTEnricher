@@ -83,7 +83,7 @@ public class CimmytWriter
 		for(int i=0;i<titles.size();i++)
 		{
 			writer.println("\t<title>");
-				writer.println("\t\t<value>"+titles.get(i).getValue()+"</value>");
+				writer.println("\t\t<value><![CDATA["+titles.get(i).getValue()+"]]></value>");
 				
 				if(titles.get(i).getLang()!=null)
 					writer.println("\t\t<lang>"+titles.get(i).getLang()+"</lang>");
@@ -180,7 +180,7 @@ public class CimmytWriter
 						{
 							if(!subjects.get(j).getUri().equals(subjects.get(i).getUri()))
 							{
-								writer.println("\t\t<uri>"+subjects.get(j).getUri()+"</uri>");
+								writer.println("\t\t<uri><![CDATA["+subjects.get(j).getUri()+"]]></uri>");
 								writer.println("\t\t<vocabulary>"+subjects.get(j).getVocabulary().toLowerCase()+"</vocabulary>");
 								writer.println("\t\t<score>"+subjects.get(j).getScore()+"</score>");
 							}
@@ -202,7 +202,7 @@ public class CimmytWriter
 				{
 					if(!subjects.get(i).getUri().equals("null"))
 					{
-						writer.println("\t\t<uri>"+subjects.get(i).getUri()+"</uri>");
+						writer.println("\t\t<uri><![CDATA["+subjects.get(i).getUri()+"]]></uri>");
 						writer.println("\t\t<vocabulary>"+subjects.get(i).getVocabulary()+"</vocabulary>");
 						writer.println("\t\t<score>"+subjects.get(i).getScore()+"</score>");
 					}
@@ -474,7 +474,7 @@ public class CimmytWriter
 					writer.println("\t\t<value>"+locations.get(i)+"</value>");
 					try
 					{
-						writer.println("\t\t<uri>"+geonames.get(i)+"</uri>");
+						writer.println("\t\t<uri><![CDATA["+geonames.get(i)+"]]></uri>");
 						writer.println("\t\t<vocabulary>geonames</vocabulary>");
 						
 						/*
@@ -492,8 +492,8 @@ public class CimmytWriter
 							fao_geo=fao[0].toLowerCase()+"_"+fao[1];
 						}
 						
-						writer.println("\t\t<uri>http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
-								fao_geo+"</uri>");
+						writer.println("\t\t<uri><![CDATA[http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
+								fao_geo+"]]></uri>");
 						writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
 					}
 					catch (IndexOutOfBoundsException e) {
@@ -845,7 +845,7 @@ public class CimmytWriter
 				writer.println("\t<type>person</type>");
 				
 				writer.println("\t<title>");
-					writer.println("\t\t<value>"+person.name+"</value>");
+					writer.println("\t\t<value><![CDATA["+person.name+"]]></value>");
 					writer.println("\t\t<lang></lang>");
 				writer.println("\t</title>");
 				
@@ -1040,7 +1040,7 @@ public class CimmytWriter
 				writer.println("\t<type>organization</type>");
 				
 				writer.println("\t<title>");
-					writer.println("\t\t<value>"+organization.name+"</value>");
+					writer.println("\t\t<value><![CDATA["+organization.name+"]]></value>");
 					writer.println("\t\t<lang></lang>");
 				writer.println("\t</title>");
 
@@ -1176,7 +1176,7 @@ public class CimmytWriter
 				writer.println("\t<type>collection</type>");
 				
 				writer.println("\t<title>");
-					writer.println("\t\t<value>"+collection.name+"</value>");
+					writer.println("\t\t<value><![CDATA["+collection.name+"]]></value>");
 					writer.println("\t\t<lang></lang>");
 				writer.println("\t</title>");
 
@@ -1345,7 +1345,7 @@ public class CimmytWriter
 					writer.println("\t\t<value>"+locations.get(i)+"</value>");
 					try
 					{
-						writer.println("\t\t<uri>"+geonames.get(i)+"</uri>");
+						writer.println("\t\t<uri><![CDATA["+geonames.get(i)+"]]></uri>");
 						writer.println("\t\t<vocabulary>geonames</vocabulary>");
 						
 						/*
@@ -1363,8 +1363,8 @@ public class CimmytWriter
 							fao_geo=fao[0].toLowerCase()+"_"+fao[1];
 						}
 						
-						writer.println("\t\t<uri>http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
-								fao_geo+"</uri>");
+						writer.println("\t\t<uri><![CDATA[http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
+								fao_geo+"]]></uri>");
 						writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
 					}
 					catch (IndexOutOfBoundsException e) {
@@ -1442,7 +1442,7 @@ public class CimmytWriter
 				e2.printStackTrace();
 			}
 			
-			writer.println("\t<funding>"+funding+"</funding>");
+			writer.println("\t<funding><![CDATA["+funding+"]]></funding>");
 			
 			List<String> relation_abbr=new ArrayList<String>();
 			List<String> relation_program=new ArrayList<String>();
