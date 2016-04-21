@@ -165,7 +165,7 @@ public class Enrich {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-			        
+					System.out.println("Finished with:"+record.getApiid());
 				}
 		        
 			} catch (FileNotFoundException e) {

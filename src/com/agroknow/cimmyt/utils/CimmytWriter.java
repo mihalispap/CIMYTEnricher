@@ -45,7 +45,7 @@ public class CimmytWriter
 		
 		//CimmytRecord record=new C
 		writeObject(record,folder);
-		if(record.getHandler().contains("repository"))
+		if(record.getHandler().contains("repository") || record.getHandler().contains("knowledge"))
 			writeResource(record,folder);
 		else if(record.getHandler().contains("data.cimmyt"))
 			writeDatasetSoftware(record, folder);
