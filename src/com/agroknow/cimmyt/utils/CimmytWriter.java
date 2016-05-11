@@ -258,14 +258,14 @@ public class CimmytWriter
 		for(int i=0;i<created.size();i++)
 		{
 			String date=created.get(i).toString();
-			writer.println("\t<created>"+date+"</created>");
+			writer.println("\t<created>\""+date+"\"</created>");
 		}
 		if(created.size()==0)
 			writer.println("<created></created>");
 		
 		
 		XMLGregorianCalendar updated=record.getUpdatedDate();
-		writer.println("\t<updated>"+updated+"</updated>");
+		writer.println("\t<updated>\""+updated+"\"</updated>");
 		
 		
 		
@@ -370,7 +370,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<dates.size();i++)
 			{
-				writer.println("\t<date>"+dates.get(i)+"</date>");
+				writer.println("\t<date>\""+dates.get(i)+"\"</date>");
 			}
 
 			if(dates.size()==0)
@@ -383,7 +383,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<dates.size();i++)
 			{
-				writer.println("\t<updatedDate>"+dates.get(i)+"</updatedDate>");
+				writer.println("\t<updatedDate>\""+dates.get(i)+"\"</updatedDate>");
 			}
 
 			if(dates.size()==0)
@@ -1297,7 +1297,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<dates.size();i++)
 			{
-				writer.println("\t<date>"+dates.get(i)+"</date>");
+				writer.println("\t<date>\""+dates.get(i)+"\"</date>");
 			}
 
 			if(dates.size()==0)
