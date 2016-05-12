@@ -161,6 +161,7 @@ public class Enrich {
 					CimmytWriter writer=new CimmytWriter();
 					try {
 						CimmytWriter.write2File(record,output);
+						//break;
 					} catch (UnsupportedEncodingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

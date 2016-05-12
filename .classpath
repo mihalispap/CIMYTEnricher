@@ -14,5 +14,9 @@
 	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jersey-json-1.19.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/jettison-1.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/org.eclipse.persistence.moxy-2.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/guava-16.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/language-detector-0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/slf4j-api-1.7.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mihalis/git/CIMMYTEnricher/CIMMYTEnricher/CIMMYTEnricher/lib/slf4j-simple-1.7.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

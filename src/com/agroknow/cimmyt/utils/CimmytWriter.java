@@ -1,11 +1,14 @@
 package com.agroknow.cimmyt.utils;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
@@ -26,6 +29,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.codehaus.jettison.json.JSONException;
+import org.jdom.Element;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -36,6 +40,15 @@ import com.agroknow.cimmyt.CimmytPerson;
 import com.agroknow.cimmyt.external.Freme;
 import com.agroknow.cimmyt.parser.CimmytRecord;
 import com.agroknow.cimmyt.parser.CimmytRecordInterface;
+import com.google.common.base.Optional;
+import com.optimaize.langdetect.LanguageDetector;
+import com.optimaize.langdetect.LanguageDetectorBuilder;
+import com.optimaize.langdetect.ngram.NgramExtractors;
+import com.optimaize.langdetect.profiles.LanguageProfile;
+import com.optimaize.langdetect.profiles.LanguageProfileReader;
+import com.optimaize.langdetect.text.CommonTextObjectFactories;
+import com.optimaize.langdetect.text.TextObject;
+import com.optimaize.langdetect.text.TextObjectFactory;
 
 public class CimmytWriter 
 {
@@ -91,12 +104,78 @@ public class CimmytWriter
 				{
 					try
 					{
-						if(langs.size()==1)
-							writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
-						else
-							writer.println("\t\t<lang></lang>");
+						
+						//load all languages:
+						List<LanguageProfile> languageProfiles = null;
+						try {
+							languageProfiles = new LanguageProfileReader().readAll();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						//build language detector:
+						LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
+						        .withProfiles(languageProfiles)
+						        .build();
+
+						//create a text object factory
+						TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
+
+						//query:
+						TextObject textObject = textObjectFactory.forText(titles.get(i).getValue());
+						Optional<String> lang = languageDetector.detect(textObject);
+						
+						String iso3=lang.get();
+						
+						
+                			String value=lang.get();
+                			
+                			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+            						+ "assets"+System.getProperty("file.separator");
+                			
+                			/*
+                			 * 	TODO: 
+                			 * 		rethink about case sensitive/insensitive
+                			 * 
+                			 * */
+                			
+                				FileInputStream fstream = new FileInputStream(absolute_path+"iso-languagecodes.db");
+                				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+                				String strLine;
+                				while ((strLine = br.readLine()) != null)   
+                				{
+
+                					String[] langs_read=strLine.split("\t");
+                				  
+	                				boolean found=false;
+
+	                				if(value.equalsIgnoreCase(langs_read[2]))
+	                				{
+	                						found=true;
+	                				}
+	                				if(found)
+	                				{
+	                					iso3=langs_read[0];
+	                					break;
+	                				}
+                				}
+                				br.close();
+           		
+						
+						//String lang2 = languageDetector.detect(textObject);
+						writer.println("\t\t<lang>"+iso3+"</lang>");
+						//if(langs.size()==1)
+							//writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
+						//else
+						//	writer.println("\t\t<lang></lang>");
 					}
 					catch(java.lang.IndexOutOfBoundsException e)
+					{
+						writer.println("\t\t<lang></lang>");
+					}
+					catch(java.lang.Exception e)
 					{
 						writer.println("\t\t<lang></lang>");
 					}
@@ -119,15 +198,80 @@ public class CimmytWriter
 						writer.println("\t\t<lang>"+descrs.get(i).getLang()+"</lang>");
 					else
 					{
-						if(langs.size()==1)
+						/*if(langs.size()==1)
 							writer.println("\t\t<lang>"+langs.get(i)+"</lang>");
 						else
 							writer.println("\t\t<lang></lang>");
+							*/
+						
+						//load all languages:
+						List<LanguageProfile> languageProfiles = null;
+						try {
+							languageProfiles = new LanguageProfileReader().readAll();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						//build language detector:
+						LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
+						        .withProfiles(languageProfiles)
+						        .build();
+
+						//create a text object factory
+						TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
+
+						//query:
+						TextObject textObject = textObjectFactory.forText(descrs.get(i).getValue());
+						Optional<String> lang = languageDetector.detect(textObject);
+						
+						String iso3=lang.get();
+						
+						
+                			String value=lang.get();
+                			
+                			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+            						+ "assets"+System.getProperty("file.separator");
+                			
+                			/*
+                			 * 	TODO: 
+                			 * 		rethink about case sensitive/insensitive
+                			 * 
+                			 * */
+                			
+                				FileInputStream fstream = new FileInputStream(absolute_path+"iso-languagecodes.db");
+                				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+                				String strLine;
+                				while ((strLine = br.readLine()) != null)   
+                				{
+
+                					String[] langs_read=strLine.split("\t");
+                				  
+	                				boolean found=false;
+
+	                				if(value.equalsIgnoreCase(langs_read[2]))
+	                				{
+	                						found=true;
+	                				}
+	                				if(found)
+	                				{
+	                					iso3=langs_read[0];
+	                					break;
+	                				}
+                				}
+                				br.close();
+           		
+                		writer.println("\t\t<lang>"+iso3+"</lang>");
 					}
 				}
 				catch(java.lang.IndexOutOfBoundsException e)
 				{
 					e.printStackTrace();
+					writer.println("\t\t<lang></lang>");
+				}
+				catch(java.lang.Exception e)
+				{
 					writer.println("\t\t<lang></lang>");
 				}
 			writer.println("\t</description>");
@@ -258,14 +402,14 @@ public class CimmytWriter
 		for(int i=0;i<created.size();i++)
 		{
 			String date=created.get(i).toString();
-			writer.println("\t<created>\""+date+"\"</created>");
+			writer.println("\t<created>"+date+"</created>");
 		}
 		if(created.size()==0)
 			writer.println("<created></created>");
 		
 		
 		XMLGregorianCalendar updated=record.getUpdatedDate();
-		writer.println("\t<updated>\""+updated+"\"</updated>");
+		writer.println("\t<updated>"+updated+"</updated>");
 		
 		
 		
@@ -370,7 +514,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<dates.size();i++)
 			{
-				writer.println("\t<date>\""+dates.get(i)+"\"</date>");
+				writer.println("\t<date>"+dates.get(i)+"</date>");
 			}
 
 			if(dates.size()==0)
@@ -383,7 +527,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<dates.size();i++)
 			{
-				writer.println("\t<updatedDate>\""+dates.get(i)+"\"</updatedDate>");
+				writer.println("\t<updatedDate>"+dates.get(i)+"</updatedDate>");
 			}
 
 			if(dates.size()==0)
@@ -1297,7 +1441,7 @@ public class CimmytWriter
 			
 			for(int i=0;i<dates.size();i++)
 			{
-				writer.println("\t<date>\""+dates.get(i)+"\"</date>");
+				writer.println("\t<date>"+dates.get(i)+"</date>");
 			}
 
 			if(dates.size()==0)
