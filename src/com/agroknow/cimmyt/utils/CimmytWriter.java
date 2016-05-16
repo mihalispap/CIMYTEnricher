@@ -123,7 +123,7 @@ public class CimmytWriter
 						TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
 
 						//query:
-						TextObject textObject = textObjectFactory.forText(titles.get(i).getValue());
+						TextObject textObject = textObjectFactory.forText(titles.get(i).getValue().toLowerCase());
 						Optional<String> lang = languageDetector.detect(textObject);
 						
 						String iso3=lang.get();
@@ -222,7 +222,7 @@ public class CimmytWriter
 						TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
 
 						//query:
-						TextObject textObject = textObjectFactory.forText(descrs.get(i).getValue());
+						TextObject textObject = textObjectFactory.forText(descrs.get(i).getValue().toLowerCase());
 						Optional<String> lang = languageDetector.detect(textObject);
 						
 						String iso3=lang.get();
