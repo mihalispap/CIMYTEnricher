@@ -401,16 +401,29 @@ public class CimmytWriter
 		List<XMLGregorianCalendar> created=record.getDate();
 		for(int i=0;i<created.size();i++)
 		{
-			String date=created.get(i).toString();
-			writer.println("\t<created>"+date+"</created>");
+			try
+			{
+				String date=created.get(i).toString();
+				writer.println("\t<created>"+date+"</created>");
+			}
+			catch(java.lang.NullPointerException e)
+			{
+				writer.println("<created></created>");
+			}
 		}
 		if(created.size()==0)
 			writer.println("<created></created>");
 		
 		
 		XMLGregorianCalendar updated=record.getUpdatedDate();
-		writer.println("\t<updated>"+updated+"</updated>");
-		
+		try
+		{
+			writer.println("\t<updated>"+updated+"</updated>");
+		}
+		catch(java.lang.NullPointerException e)
+		{
+			writer.println("\t<updated></updated>");
+		}
 		
 		
 		writer.println("</object>");
