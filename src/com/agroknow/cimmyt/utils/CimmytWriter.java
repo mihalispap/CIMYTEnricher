@@ -1111,9 +1111,9 @@ public class CimmytWriter
 			
 			writer.println("<person>");
 			
-				writer.println("\t<fullName>"+person.name+"</fullName>");
-				writer.println("\t<lastName>"+person.last_name+"</lastName>");
-				writer.println("\t<firstName>"+person.first_name+"</firstName>");
+				writer.println("\t<fullName><![CDATA["+person.name+"]]></fullName>");
+				writer.println("\t<lastName><![CDATA["+person.last_name+"]]></lastName>");
+				writer.println("\t<firstName><![CDATA["+person.first_name+"]]></firstName>");
 				
 				int pid=person.name.hashCode();
 				if(pid<0)
