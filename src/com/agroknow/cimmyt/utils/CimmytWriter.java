@@ -314,7 +314,7 @@ public class CimmytWriter
 				 * TODO:
 				 * 		perhaps toLowerCase()??
 				 * */
-				writer.println("\t\t<value>"+subjects.get(i).getValue().toLowerCase()+"</value>");
+				writer.println("\t\t<value><![CDATA["+subjects.get(i).getValue().toLowerCase()+"]]></value>");
 				
 				for(int j=i+1;j<subjects.size();j++)
 				{
