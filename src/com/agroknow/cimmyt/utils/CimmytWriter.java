@@ -84,7 +84,7 @@ public class CimmytWriter
 		else if(handler.contains("data.cimmyt"))
 			type="dataset_software";
 		
-		writer.println("\t<type>"+type+"</type>");
+		writer.println("\t<type><![CDATA["+type+"]]></type>");
 		
 		titles=record.getTitle();
 		List<String> langs=new ArrayList<String>();
@@ -441,7 +441,7 @@ public class CimmytWriter
 		
 			for(int i=0;i<types.size();i++)
 			{
-				writer.println("\t<type>"+types.get(i)+"</type>");
+				writer.println("\t<type><![CDATA["+types.get(i)+"]]></type>");
 			}
 			
 			if(types.size()==0)
@@ -884,7 +884,7 @@ public class CimmytWriter
 						}
 						try
 						{
-							writer.println("\t\t\t<type>"+resource_types.get(i)+"</type>");
+							writer.println("\t\t\t<type><![CDATA["+resource_types.get(i)+"]]></type>");
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
@@ -1397,7 +1397,7 @@ public class CimmytWriter
 			types=record.getType();
 			
 			for(int i=0;i<types.size();i++)
-				writer.println("\t<type>"+types.get(i)+"</type>");
+				writer.println("\t<type><![CDATA["+types.get(i)+"]]></type>");
 		
 			if(types.size()==0)
 				writer.println("\t<type></type>");
@@ -1739,7 +1739,7 @@ public class CimmytWriter
 						}
 						try
 						{
-							writer.println("\t\t\t<type>"+resource_types.get(i)+"</type>");
+							writer.println("\t\t\t<type><![CDATA["+resource_types.get(i)+"]]></type>");
 						}
 						catch(java.lang.IndexOutOfBoundsException e)
 						{
