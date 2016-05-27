@@ -1054,49 +1054,39 @@ public class CimmytWriter
 			
 			
 			person.orcid="null";
-			try {
-				List<String> locations=record.getLocation();
-				String compact_locs="";
-				
-				for(int j=0;j<locations.size();j++)
-					compact_locs+=locations.get(j)+" ";
+			List<String> locations=record.getLocation();
+			String compact_locs="";
+			
+			for(int j=0;j<locations.size();j++)
+				compact_locs+=locations.get(j)+" ";
 
-				/*try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
-					    BufferedWriter bw = new BufferedWriter(fw);
-					    PrintWriter out = new PrintWriter(bw))
-					{
-					    out.print(person.first_name+" "
-								+person.last_name+";");
-					} catch (IOException e) {
-					    //exception handling left as an exercise for the reader
-					}
-				*/
-				person.orcid=freme_enricher.enrichPersons(person.first_name+" "
-						+person.last_name+" "+person.affiliation_name);
+
+			try
+			{
+				GetConfig config=new GetConfig();
+				int enrich=Integer.valueOf(config.getValue("author_enrich"));
 				
-				try
-				{
-					if(person.orcid.isEmpty())
-						person.orcid=freme_enricher.enrichPersons(person.first_name+" "
-							+person.last_name);
-				}
-				catch(java.lang.NullPointerException e)
+				if(enrich==1)
 				{
 					person.orcid=freme_enricher.enrichPersons(person.first_name+" "
-							+person.last_name);
+							+person.last_name+" "+person.affiliation_name);
+					
+					try
+					{
+						if(person.orcid.isEmpty())
+							person.orcid=freme_enricher.enrichPersons(person.first_name+" "
+								+person.last_name);
+					}
+					catch(java.lang.NullPointerException e)
+					{
+						person.orcid=freme_enricher.enrichPersons(person.first_name+" "
+								+person.last_name);
+					}
 				}
+			}
+			catch(java.lang.Exception e)
+			{
 				
-				//System.exit(1);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				
-			} catch (ProtocolException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
 			}
 			
 			/*try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
@@ -1298,7 +1288,13 @@ public class CimmytWriter
 
 			CimmytEnrich cimmyt_enrich=new CimmytEnrich();
 			try {
-				cimmyt_enrich.enrichCollection(collection);
+				GetConfig config=new GetConfig();
+				int enrich=Integer.valueOf(config.getValue("collection_enrich"));
+				
+				if(enrich==1)
+				{
+					cimmyt_enrich.enrichCollection(collection);
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

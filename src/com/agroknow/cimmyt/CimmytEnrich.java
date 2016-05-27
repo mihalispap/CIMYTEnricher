@@ -46,19 +46,31 @@ import org.xml.sax.SAXException;
 import com.agroknow.cimmyt.external.Freme;
 import com.agroknow.cimmyt.parser.CimmytRecord;
 import com.agroknow.cimmyt.parser.CimmytRecordInterface;
+import com.agroknow.cimmyt.utils.GetConfig;
 
 public class CimmytEnrich 
 {
 	
 	void enrich(CimmytRecord record) throws Exception
 	{
-		if(record.getHandler().contains("repository"))
-			this.enrichDSpace(record);
-		else if(record.getHandler().contains("data.cimmyt"))
-			this.enrichDVN(record);
+		GetConfig config=new GetConfig();
+		int enrich=Integer.valueOf(config.getValue("self_enrich"));
 		
-		this.enrichFreme(record);
-		this.enrichGeographical(record);
+		if(enrich==1)
+		{
+			if(record.getHandler().contains("repository"))
+				this.enrichDSpace(record);
+			else if(record.getHandler().contains("data.cimmyt"))
+				this.enrichDVN(record);
+		}
+		
+		enrich=Integer.valueOf(config.getValue("subject_enrich"));
+		if(enrich==1)
+			this.enrichFreme(record);
+		
+		enrich=Integer.valueOf(config.getValue("geo_enrich"));
+		if(enrich==1)
+			this.enrichGeographical(record);
 		
 		
 		//this.cleanse(record);
@@ -67,6 +79,18 @@ public class CimmytEnrich
 
 	void enrichFreme(CimmytRecord record)
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("subject_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return;
+		
 		Freme freme_enricher=new Freme();
 		List<CimmytSubject> subjects=new ArrayList<CimmytSubject>();
 		
@@ -100,6 +124,20 @@ public class CimmytEnrich
 	
 	void enrichGeographical(CimmytRecord record) throws IOException
 	{
+
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("geo_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return;
+		
+		
 		for(int i=0;i<record.getRegion().size();i++)
 		{
 		
@@ -764,6 +802,19 @@ public class CimmytEnrich
 	
 	void enrichDVN(CimmytRecord record) throws Exception
 	{
+
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return;
+		
 		/*
 		 * 
 		 * http://data.cimmyt.org/dvn/OAIHandler?verb=GetRecord&identifier=hdl:11529/10201&metadataPrefix=ddi
@@ -949,6 +1000,20 @@ public class CimmytEnrich
 
 	public String extractKindOfData(CimmytRecord record) throws Exception
 	{
+
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return "";
+		
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -982,6 +1047,18 @@ public class CimmytEnrich
 
 	public String extractNotesDVN(CimmytRecord record) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return "";
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1046,6 +1123,18 @@ public class CimmytEnrich
 
 	public String extractTimePeriod(CimmytRecord record) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return "";
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1079,6 +1168,18 @@ public class CimmytEnrich
 
 	public String extractFunding(CimmytRecord record) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return "";
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1112,6 +1213,18 @@ public class CimmytEnrich
 
 	public List<String> extractProgramDVN(CimmytRecord record) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return new ArrayList<String>();
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1163,6 +1276,18 @@ public class CimmytEnrich
 
 	public List<String> extractProgramNameDVN(CimmytRecord record) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return new ArrayList<String>();
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1218,6 +1343,18 @@ public class CimmytEnrich
 
 	public List<String> extractAbbreviationDVN(CimmytRecord record) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return new ArrayList<String>();
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1268,6 +1405,18 @@ public class CimmytEnrich
 	
 	public void enrichOrganizationDVN(CimmytRecord record, CimmytOrganization organization) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return;
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1403,6 +1552,18 @@ public class CimmytEnrich
 
 	public void enrichPersonDVN(CimmytRecord record, CimmytPerson person) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return;
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
@@ -1475,6 +1636,18 @@ public class CimmytEnrich
 
 	public List<String> extractPersonsDVN(CimmytRecord record) throws XPathExpressionException, Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return new ArrayList<String>();
+		
 		List<String> persons=new ArrayList<String>();
 		
 		String domain_id=record.getDomainid().get(0);
@@ -1531,6 +1704,18 @@ public class CimmytEnrich
 
 	public List<String> extractOrganizationsDVN(CimmytRecord record) throws XPathExpressionException, Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return new ArrayList<String>();
+		
 		List<String> organizations=new ArrayList<String>();
 		
 		String domain_id=record.getDomainid().get(0);
@@ -1599,6 +1784,18 @@ public class CimmytEnrich
 	
 	void enrichDSpace(CimmytRecord record) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("self_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return;
+		
 		/*
 		 * 	SAMPLE:
 		 * 		http://repository.cimmyt.org/oai/request?verb=GetRecord&identifier=oai:repository.cimmyt.org:10883/538&metadataPrefix=didl
@@ -1816,6 +2013,18 @@ public class CimmytEnrich
 	
 	public void enrichCollection(CimmytCollection collection) throws Exception
 	{
+		GetConfig config=new GetConfig();
+		int enrich = 0;
+		try {
+			enrich = Integer.valueOf(config.getValue("collection_enrich"));
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(enrich!=1)
+			return;
+		
 		String url=collection.handler+"?verb=Identify";
 		
 		URL url2 = new URL(url);
