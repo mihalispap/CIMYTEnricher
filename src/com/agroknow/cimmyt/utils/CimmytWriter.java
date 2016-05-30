@@ -457,7 +457,9 @@ public class CimmytWriter
 			
 			for(int i=0;i<creators.size();i++)
 			{
-				int cid=creators.get(i).hashCode();
+				String cr_name=creators.get(i)+" person";
+				
+				int cid=cr_name.hashCode();
 				if(cid<0)
 					cid*=-1;
 				
@@ -479,7 +481,9 @@ public class CimmytWriter
 			
 			for(int i=0;i<contributors.size();i++)
 			{
-				int cid=contributors.get(i).hashCode();
+				String contr_name=contributors.get(i)+" person";
+				
+				int cid=contr_name.hashCode();
 				if(cid<0)
 					cid*=-1;
 				
@@ -505,7 +509,9 @@ public class CimmytWriter
 			
 			for(int i=0;i<publishers.size();i++)
 			{
-				int cid=publishers.get(i).hashCode();
+				String pub_name=publishers.get(i)+" organization";
+				
+				int cid=pub_name.hashCode();
 				if(cid<0)
 					cid*=-1;
 				
@@ -978,7 +984,9 @@ public class CimmytWriter
 		
 		for(int i=0;i<persons.size();i++)
 		{
-			int id=persons.get(i).hashCode();
+			String p_name=persons.get(i)+" person";
+			
+			int id=p_name.hashCode();
 			if(id<0)
 				id*=-1;
 			
@@ -1105,7 +1113,9 @@ public class CimmytWriter
 				writer.println("\t<lastName><![CDATA["+person.last_name+"]]></lastName>");
 				writer.println("\t<firstName><![CDATA["+person.first_name+"]]></firstName>");
 				
-				int pid=person.name.hashCode();
+				String person_name=person.name+" person";
+				
+				int pid=person_name.hashCode();
 				if(pid<0)
 					pid*=-1;
 				writer.println("\t<appid>"+String.valueOf(pid)+"</appid>");
@@ -1130,7 +1140,10 @@ public class CimmytWriter
 				{
 					writer.println("\t<affiliation>");
 						writer.println("\t\t<value>"+person.affiliation_name+"</value>");
-						int aid=person.affiliation_name.hashCode();
+						
+						String aff_name=person.affiliation_name+" organization";
+						
+						int aid=aff_name.hashCode();
 						if(aid<0)
 							aid*=-1;
 						writer.println("\t\t<id>"+aid+"</id>");
@@ -1163,7 +1176,9 @@ public class CimmytWriter
 		
 		for(int i=0;i<organizations.size();i++)
 		{
-			int id=organizations.get(i).hashCode();
+			String org_name=organizations.get(i)+" organization";
+			
+			int id=org_name.hashCode();
 			if(id<0)
 				id*=-1;
 			
@@ -1227,8 +1242,8 @@ public class CimmytWriter
 			
 				writer.println("\t<fullName>"+organization.full_name+"</fullName>");
 				
-				
-				int pid=organization.name.hashCode();
+				String orgz_name=organization.name+" organization";
+				int pid=orgz_name.hashCode();
 				if(pid<0)
 					pid*=-1;
 				writer.println("\t<appid>"+String.valueOf(pid)+"</appid>");
@@ -1410,7 +1425,8 @@ public class CimmytWriter
 			
 			for(int i=0;i<creators.size();i++)
 			{
-				int cid=creators.get(i).hashCode();
+				String p_name=creators.get(i)+" person";
+				int cid=p_name.hashCode();
 				if(cid<0)
 					cid*=-1;
 				
@@ -1430,7 +1446,9 @@ public class CimmytWriter
 			
 			for(int i=0;i<distributors.size();i++)
 			{
-				int cid=distributors.get(i).hashCode();
+				String dist_name=distributors.get(i)+" organization";
+				
+				int cid=dist_name.hashCode();
 				if(cid<0)
 					cid*=-1;
 				
