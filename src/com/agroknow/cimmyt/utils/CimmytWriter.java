@@ -1810,7 +1810,11 @@ public class CimmytWriter
 	}
 	
 	public static boolean exists(String URLName) throws java.net.ConnectException{
-	    try {
+	    
+		if(URLName.isEmpty())
+			return false;
+		
+		try {
 	      HttpURLConnection.setFollowRedirects(false);
 	      // note : you may also need
 	      //        HttpURLConnection.setInstanceFollowRedirects(false)
