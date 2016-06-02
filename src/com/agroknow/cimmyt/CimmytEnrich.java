@@ -50,7 +50,6 @@ import com.agroknow.cimmyt.utils.GetConfig;
 
 public class CimmytEnrich 
 {
-	
 	void enrich(CimmytRecord record) throws Exception
 	{
 		GetConfig config=new GetConfig();
@@ -96,12 +95,34 @@ public class CimmytEnrich
 		
 		try 
 		{
+			int init_size=0;
+			try
+			{
+				init_size=subjects.size();
+			}
+			catch(java.lang.Exception e)
+			{
+				init_size=0;
+			}
+			
 			for(int i=0;i<record.getDescription().size();i++)
 				subjects.addAll(freme_enricher.enrichSubjects(record.getDescription().get(i).getValue()));
 			for(int i=0;i<record.getSubject().size();i++)
 				subjects.addAll(freme_enricher.enrichSubjects(record.getSubject().get(i).getValue()));
 			for(int i=0;i<record.getTitle().size();i++)
 				subjects.addAll(freme_enricher.enrichSubjects(record.getTitle().get(i).getValue()));
+
+			int final_size=0;
+			try
+			{
+				final_size=subjects.size();
+			}
+			catch(java.lang.Exception e)
+			{
+				final_size=0;
+			}
+			
+			record.updateStats((final_size-init_size)<0?0:(final_size-init_size));
 			
 			
 		} catch (IOException e) {
@@ -137,6 +158,7 @@ public class CimmytEnrich
 		if(enrich!=1)
 			return;
 		
+		int no_geoenrich=0;
 		
 		for(int i=0;i<record.getRegion().size();i++)
 		{
@@ -159,7 +181,7 @@ public class CimmytEnrich
 				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 	
 				String strLine;
-				while ((strLine = br.readLine()) != null)   
+				while ((strLine = br.readLine()) != null && 1==0)   
 				{
 	
 					String[] geonames=strLine.split("\t");
@@ -181,6 +203,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(toCheck);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -220,6 +244,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(toCheck);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -253,6 +279,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(toCheck);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -286,6 +314,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(toCheck);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -303,7 +333,7 @@ public class CimmytEnrich
 				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 	
 				String strLine;
-				while ((strLine = br.readLine()) != null)   
+				while ((strLine = br.readLine()) != null && 1==0)   
 				{
 	
 					String[] geonames=strLine.split("\t");
@@ -325,6 +355,7 @@ public class CimmytEnrich
 					{
 						record.addLocation(toCheck);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -359,6 +390,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(toCheck);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -366,7 +399,8 @@ public class CimmytEnrich
 			}
 		}
 
-		if(true)
+		
+		/*if(true)
 			return;
 		
 		for(int i=0;i<record.getPlace().size();i++)
@@ -518,9 +552,9 @@ public class CimmytEnrich
 		
 		if(true)
 			return;
+		*/
 		
-		
-		
+
 		for(int i=0;i<record.getDescription().size();i++)
 		{
 		
@@ -539,7 +573,7 @@ public class CimmytEnrich
 				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 	
 				String strLine;
-				while ((strLine = br.readLine()) != null)   
+				while ((strLine = br.readLine()) != null && 1==0)   
 				{
 	
 					String[] geonames=strLine.split("\t");
@@ -556,6 +590,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -588,6 +624,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -603,7 +641,7 @@ public class CimmytEnrich
 				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 	
 				String strLine;
-				while ((strLine = br.readLine()) != null)   
+				while ((strLine = br.readLine()) != null && 1==0)   
 				{
 	
 					String[] geonames=strLine.split("\t");
@@ -620,6 +658,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -652,6 +692,154 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+		}
+
+		for(int i=0;i<record.getTitle().size();i++)
+		{
+		
+			String[] value=record.getDescription().get(i).getValue().split(" ");
+			
+			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
+					+ "assets"+System.getProperty("file.separator");
+			
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null && 1==0)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities5000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null && 1==0)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.length;j++)
+			{
+				value[j]=value[j].replace(",", "");
+				value[j]=value[j].replace("(", "");
+				value[j]=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"null.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+	
+					if(value[j].equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(value[j]);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -694,6 +882,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -726,6 +916,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -758,6 +950,8 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
@@ -792,17 +986,23 @@ public class CimmytEnrich
 					{
 						record.addLocation(value[j]);
 						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
 						break;
 					}
 				}
 				br.close();
 			}
 		}
+		
+		record.updateStats(no_geoenrich);
 	}
 	
 	void enrichDVN(CimmytRecord record) throws Exception
 	{
 
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -854,7 +1054,10 @@ public class CimmytEnrich
         		{
         			//System.out.println(j+")"+attributes.item(j).getTextContent());
         			if(attributes.item(j).getNodeName().equals("URI"))
+        			{
         				record.addResourceLink(attributes.item(j).getTextContent());
+        				no_enrich++;
+        			}
         		}
         	}
         }
@@ -869,7 +1072,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		record.addLabel(nl.item(i).getTextContent());        		
+        		record.addLabel(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
 
@@ -884,7 +1088,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		record.addCategory(nl.item(i).getTextContent());        		
+        		record.addCategory(nl.item(i).getTextContent());  
+        		no_enrich++;
         	}
         }
 
@@ -907,7 +1112,10 @@ public class CimmytEnrich
         				break;
         		}
         		if(j!=attributes.getLength())
+        		{
         			record.changeProducer(nl.item(i).getTextContent(), attributes.item(j).getTextContent());
+        			no_enrich++;
+        		}
         	}
         }
 
@@ -930,7 +1138,10 @@ public class CimmytEnrich
         				break;
         		}
         		if(j!=attributes.getLength())
+        		{
         			record.changeProducer(nl.item(i).getTextContent(), attributes.item(j).getTextContent());
+        			no_enrich++;
+        		}
         	}
         }
 
@@ -958,6 +1169,7 @@ public class CimmytEnrich
         		if(voc.length()>0)
         		{
         			record.updateSubject(nl.item(i).getTextContent(),voc,uri);
+        			no_enrich++;
         		}
         	}
         }
@@ -975,7 +1187,10 @@ public class CimmytEnrich
         		String[] values=nl.item(i).getTextContent().split("; ");
         		
         		for(int j=0;j<values.length;j++)
+        		{
         			record.addRegion(values[j]);
+        			no_enrich++;
+        		}
         	}
         }
 
@@ -992,15 +1207,21 @@ public class CimmytEnrich
         		String[] values=nl.item(i).getTextContent().split("; ");
         		
         		for(int j=0;j<values.length;j++)
+        		{
         			record.addRegion(values[j]);
+        			no_enrich++;
+        		}
         	}
         }        
         
+        
+        record.updateStats(no_enrich);
 	}
 
 	public String extractKindOfData(CimmytRecord record) throws Exception
 	{
-
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1040,13 +1261,19 @@ public class CimmytEnrich
         
         if(nl.getLength()!=0)
         {
+        	no_enrich++;
+        	record.updateStats(no_enrich);
+        	
         	return nl.item(0).getTextContent().toLowerCase();
+        	
         }
         return "";
 	}
 
 	public String extractNotesDVN(CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1105,11 +1332,13 @@ public class CimmytEnrich
         						&& !attributes.item(j).getTextContent().contains("Abbreviation"))
         				{
         					to_write=false;
+        					no_enrich++;
         				}
         			}
         			if(attributes.item(j).getNodeName().equals("subject"))
         			{
         				subject=attributes.item(j).getTextContent();
+        				no_enrich++;
         			}
         		}
         		
@@ -1118,11 +1347,15 @@ public class CimmytEnrich
         			
         	}
         }
+        
+        record.updateStats(no_enrich);
         return notes;
 	}
 
 	public String extractTimePeriod(CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1161,6 +1394,9 @@ public class CimmytEnrich
         
         if(nl.getLength()!=0 && nl.getLength()>1)
         {
+        	no_enrich++;
+        	record.updateStats(no_enrich);
+        	
         	return nl.item(0).getTextContent()+"-"+nl.item(1).getTextContent();
         }
         return "";
@@ -1168,6 +1404,8 @@ public class CimmytEnrich
 
 	public String extractFunding(CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1206,6 +1444,9 @@ public class CimmytEnrich
         
         if(nl.getLength()!=0)
         {
+        	no_enrich++;
+        	record.updateStats(no_enrich);
+        	
         	return nl.item(0).getTextContent();
         }
         return "";
@@ -1213,6 +1454,8 @@ public class CimmytEnrich
 
 	public List<String> extractProgramDVN(CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1266,16 +1509,21 @@ public class CimmytEnrich
         						&& !attributes.item(j).getTextContent().contains("Abbreviation"))
         				{
         					values.add(attributes.item(j).getTextContent());
+        					no_enrich++;
         				}
         			}
         		}
         	}
         }
+        
+        record.updateStats(no_enrich);
         return values;
 	}
 
 	public List<String> extractProgramNameDVN(CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1333,16 +1581,22 @@ public class CimmytEnrich
         						&& !attributes.item(j).getTextContent().contains("Abbreviation"))
         				{
         					values.add(subject);
+        					no_enrich++;
         				}
         			}
         		}
         	}
         }
+        
+        record.updateStats(no_enrich);
+        
         return values;
 	}
 
 	public List<String> extractAbbreviationDVN(CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1394,17 +1648,21 @@ public class CimmytEnrich
         				if(attributes.item(j).getTextContent().contains("Program Abbreviation"))
         				{
         					values.add(attributes.item(j).getTextContent());
+        					no_enrich++;
         				}
         			}
         		}
         	}
         }
 
+        record.updateStats(no_enrich);
         return values;
 	}
 	
 	public void enrichOrganizationDVN(CimmytRecord record, CimmytOrganization organization) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1458,6 +1716,8 @@ public class CimmytEnrich
         				if(!abbr.equals(organization.name))
         					continue;
         				
+        				no_enrich++;
+        				
                 		expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
                         		+ "/citation/prodStmt/producer[@abbr='"+abbr+"']/ExtLink");
                 		NodeList nl2 = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
@@ -1473,6 +1733,7 @@ public class CimmytEnrich
                         		if(attributes_in.getLength()==1 && attributes_in.item(0).getNodeName().equals("URI"))
                         		{
                         			organization.url=attributes_in.item(0).getTextContent();
+                        			no_enrich++;
                         		}
                         		else if(attributes_in.getLength()==2)
                         		{
@@ -1480,6 +1741,7 @@ public class CimmytEnrich
                         					&& attributes_in.item(1).getTextContent().equals("image"))
                         			{
                         				organization.logo=attributes_in.item(0).getTextContent();
+                        				no_enrich++;
                         			}
                         		}
                         	}
@@ -1516,6 +1778,8 @@ public class CimmytEnrich
         				if(!abbr.equals(organization.name))
         					continue;
         				
+        				no_enrich++;
+        				
                 		expr = xpath.compile("/OAI-PMH/GetRecord/record/metadata/codeBook/stdyDscr"
                         		+ "/citation/distStmt/distrbtr[@abbr='"+abbr+"']/ExtLink");
                 		NodeList nl2 = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
@@ -1531,6 +1795,7 @@ public class CimmytEnrich
                         		if(attributes_in.getLength()==1 && attributes_in.item(0).getNodeName().equals("URI"))
                         		{
                         			organization.url=attributes_in.item(0).getTextContent();
+                        			no_enrich++;
                         		}
                         		else if(attributes_in.getLength()==2)
                         		{
@@ -1538,6 +1803,7 @@ public class CimmytEnrich
                         					&& attributes_in.item(1).getTextContent().equals("image"))
                         			{
                         				organization.logo=attributes_in.item(0).getTextContent();
+                        				no_enrich++;
                         			}
                         		}
                         	}
@@ -1548,10 +1814,14 @@ public class CimmytEnrich
         	}
         }
         
+        record.updateStats(no_enrich);
+        
 	}
 
 	public void enrichPersonDVN(CimmytRecord record, CimmytPerson person) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1598,9 +1868,15 @@ public class CimmytEnrich
         		for(int j=0;j<attributes.getLength();j++)
         		{
         			if(attributes.item(j).getNodeName().equals("email"))
+        			{
         				person.contact=attributes.item(j).getTextContent();
+        				no_enrich++;
+        			}
         			if(attributes.item(j).getNodeName().equals("affiliation"))
+        			{
         				person.affiliation_name=attributes.item(j).getTextContent();
+        				no_enrich++;
+        			}
         		}
         		//System.out.println(person.affiliation_name+", "+person.contact);
         	}
@@ -1625,17 +1901,23 @@ public class CimmytEnrich
         		for(int j=0;j<attributes.getLength();j++)
         		{
         			if(attributes.item(j).getNodeName().equals("affiliation"))
+        			{
         				person.affiliation_name=attributes.item(j).getTextContent();
+        				no_enrich++;
+        			}
         		}
         		//System.out.println(person.affiliation_name+", "+person.contact);
         	}
         }
         
+        record.updateStats(no_enrich);
         
 	}
 
 	public List<String> extractPersonsDVN(CimmytRecord record) throws XPathExpressionException, Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1677,9 +1959,8 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		String person=nl.item(i).getTextContent();
-        		//if(!person.contains(","))
-        		//	person=person.replace(" ", ", ");
         		persons.add(person);
+        		no_enrich++;
         	}
         }
         
@@ -1695,15 +1976,18 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		persons.add(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
 
-		
+		record.updateStats(no_enrich);
 		return persons;
 	}
 
 	public List<String> extractOrganizationsDVN(CimmytRecord record) throws XPathExpressionException, Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1750,7 +2034,10 @@ public class CimmytEnrich
         		for(int j=0;j<attributes.getLength();j++)
         		{
         			if(attributes.item(j).getNodeName().equals("affiliation"))
+        			{
         				organizations.add(attributes.item(j).getTextContent());
+        				no_enrich++;
+        			}
         		}
         		//System.out.println(person.affiliation_name+", "+person.contact);
         	}
@@ -1773,17 +2060,23 @@ public class CimmytEnrich
         		for(int j=0;j<attributes.getLength();j++)
         		{
         			if(attributes.item(j).getNodeName().equals("affiliation"))
+        			{
         				organizations.add(attributes.item(j).getTextContent());
+        				no_enrich++;
+        			}
         		}
         		//System.out.println(person.affiliation_name+", "+person.contact);
         	}
         }
         
+        record.updateStats(no_enrich);
 		return organizations;
 	}
 	
 	void enrichDSpace(CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -1838,9 +2131,15 @@ public class CimmytEnrich
         			//System.out.println(j+")"+value+", name:"+name);
         			
         			if(name.equals("mimeType"))
+        			{
         				record.addResourceType(value);
+        				no_enrich++;
+        			}
         			if(name.equals("ref"))
+        			{
         				record.addResourceLink(value);
+        				no_enrich++;
+        			}
         			
         			/*TODO: perhaps on everything?*/
         			if(value.endsWith(".pdf"))
@@ -1850,7 +2149,10 @@ public class CimmytEnrich
         				int size=getFileSize(urltopdf);
         				
         				if(size!=-1)
+        				{
         					record.addResourceLinkSize(String.valueOf(size));
+        					no_enrich++;
+        				}
         				//System.out.println(size);
         			}
         			
@@ -1888,7 +2190,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		record.addRegion(nl.item(i).getTextContent());        		
+        		record.addRegion(nl.item(i).getTextContent());    
+        		no_enrich++;
         	}
         }
 
@@ -1905,7 +2208,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		record.addRegion(nl.item(i).getTextContent());        		
+        		record.addRegion(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
 		
@@ -1923,6 +2227,7 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		record.addSeries(nl.item(i).getTextContent());
+        		no_enrich++;
         		//System.out.println("asdasdasda:"+record.getExtent().get(0));
         	}
         }
@@ -1939,7 +2244,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		record.addPlace(nl.item(i).getTextContent());        		
+        		record.addPlace(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
 		
@@ -1956,7 +2262,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		record.addPages(nl.item(i).getTextContent());        		
+        		record.addPages(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
 
@@ -1973,6 +2280,7 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		record.addResourceType(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
         
@@ -1989,7 +2297,7 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		record.addResourceLink(nl.item(i).getTextContent());
-        		
+        		no_enrich++;        		
         	}
         }
         xPathfactory = XPathFactory.newInstance();
@@ -2005,14 +2313,18 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		record.addResourceLinkSize(nl.item(i).getTextContent());
+        		no_enrich++;
         		//System.out.println("added:"+nl.item(i).getTextContent());
         	}
         }
 		
+        record.updateStats(no_enrich);
 	}
 	
-	public void enrichCollection(CimmytCollection collection) throws Exception
+	public void enrichCollection(CimmytCollection collection, CimmytRecord record) throws Exception
 	{
+		int no_enrich=0;
+		
 		GetConfig config=new GetConfig();
 		int enrich = 0;
 		try {
@@ -2047,6 +2359,7 @@ public class CimmytEnrich
         	for(int i=0;i<nl.getLength();i++)
         	{
         		collection.repoName=nl.item(i).getTextContent();
+        		no_enrich++;
         	}
         }
         
@@ -2070,7 +2383,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		collection.metadataNames.add(nl.item(i).getTextContent());        		
+        		collection.metadataNames.add(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
 
@@ -2084,7 +2398,8 @@ public class CimmytEnrich
         {
         	for(int i=0;i<nl.getLength();i++)
         	{
-        		collection.metadataURIs.add(nl.item(i).getTextContent());        		
+        		collection.metadataURIs.add(nl.item(i).getTextContent());
+        		no_enrich++;
         	}
         }
 
@@ -2120,9 +2435,14 @@ public class CimmytEnrich
         	{
         		//System.out.println("SET("+i+"): "+nl2.item(i).getTextContent());
         		if(nl2.item(i).getTextContent().equals(collection.spec))
-        			collection.name=set_names.get(i);        		
+        		{
+        			collection.name=set_names.get(i);
+        			no_enrich++;
+        		}
         	}
         }
+        
+        record.updateStats(no_enrich);
 	}
 	
 	private int getFileSize(URL url) {

@@ -74,7 +74,7 @@ public class Enrich {
 	        {
 	        	if (listOfFiles[i].isFile()) 
 	        	{
-	        		System.out.println("File " + listOfFiles[i].getName());
+	        		//System.out.println("File " + listOfFiles[i].getName());
 	        	} 
 	        	else if (listOfFiles[i].isDirectory()) 
 	        	{
@@ -109,10 +109,10 @@ public class Enrich {
 	    			record = (JAXBElement<CimmytRecord>) 
 	    						unmarshaller.unmarshal(new File(listOfFiles[i].getAbsolutePath()));
 	    			
-	    			System.out.println(listOfFiles[i].getAbsolutePath());
+	    			//System.out.println(listOfFiles[i].getAbsolutePath());
 	    			CimmytRecord crec = (CimmytRecord) record.getValue();
 	    			
-	    			System.out.println(crec.toString());
+	    			//System.out.println(crec.toString());
 	    			
 	    		} catch (JAXBException e) {
 	    			// TODO Auto-generated catch block
@@ -136,7 +136,7 @@ public class Enrich {
 				u = jc.createUnmarshaller();
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 
 	        // unmarshal a FosterHome instance document into a tree of Java content
@@ -164,7 +164,7 @@ public class Enrich {
 						
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 			        
 					CimmytWriter writer=new CimmytWriter();
@@ -173,9 +173,9 @@ public class Enrich {
 						//break;
 					} catch (UnsupportedEncodingException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
-					System.out.println("Finished with:"+record.getApiid());
+					System.out.println("Record:"+record.getApiid()+" Enrichments:"+record.getStats());
 				}
 		        
 			} catch (FileNotFoundException e) {

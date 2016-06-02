@@ -7,9 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.agroknow.cimmyt.CimmytSubject;
+import com.agroknow.cimmyt.utils.Statistics;
 
 public class CimmytRecordInterface extends CimmytRecord
 {
+	private Statistics stats=new Statistics();
+	public void updateStats(int value){stats.update(value);}
+	public int getStats(){return stats.getEnrichments();}
+	
 	public void updateSubject(String s, String v, String u)
 	{
 		for(int i=0;i<this.subject.size();i++)
@@ -61,6 +66,10 @@ public class CimmytRecordInterface extends CimmytRecord
     	if (location == null) {
     		location = new ArrayList<String>();
         }
+    	
+    	if(location.equals("None") ||
+    			location.equals("Country"))
+    		return;
     	
     	int i;
     	for(i=0;i<location.size();i++)

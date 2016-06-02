@@ -53,7 +53,7 @@ public class Freme
 			streamReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
 			return null;
 		} 
 		StringBuilder responseStrBuilder = new StringBuilder();
@@ -63,7 +63,7 @@ public class Freme
 			    responseStrBuilder.append(inputStr);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 		
@@ -72,7 +72,7 @@ public class Freme
 			responseCode = connection.getResponseCode();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	    
@@ -198,7 +198,7 @@ public class Freme
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld&language=en&"
 						+ "dataset="+dataset+"&mode=all";
 		
-		System.out.println("FREME:"+uri);
+		//System.out.println("FREME:"+uri);
 		/*String uri = "http://api-dev.freme-project.eu/current/e-terminology/tilde?"
 				+ "input="+URLEncoder.encode(value,"UTF-8")+"&informat=text&outformat=json-ld"
 						+ "&source-lang=en&target-lang=en&domain=TaaS-1001";
@@ -223,7 +223,7 @@ public class Freme
 			streamReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
 			return "";
 		} 
 		StringBuilder responseStrBuilder = new StringBuilder();
@@ -233,7 +233,7 @@ public class Freme
 			    responseStrBuilder.append(inputStr);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return "";
 		}
 		
@@ -242,7 +242,7 @@ public class Freme
 			responseCode = connection.getResponseCode();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return "";
 		}
 	    
@@ -283,7 +283,7 @@ public class Freme
 									
 								}
 							
-							System.out.println(value+";"+uri+";"+orcid+";"+score);
+							//System.out.println(value+";"+uri+";"+orcid+";"+score);
 							return orcid;
 						}
 						
@@ -291,7 +291,7 @@ public class Freme
 					
 				}
 	    }
-	    System.out.println(value+";"+uri+";null;null");
+	    //System.out.println(value+";"+uri+";null;null");
 	    try(FileWriter fw = new FileWriter("C:\\Users\\Mihalis\\Desktop\\CIMMYT\\outfilename.csv", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))

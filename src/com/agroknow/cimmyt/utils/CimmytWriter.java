@@ -111,7 +111,7 @@ public class CimmytWriter
 							languageProfiles = new LanguageProfileReader().readAll();
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							//e.printStackTrace();
 						}
 
 						//build language detector:
@@ -210,7 +210,7 @@ public class CimmytWriter
 							languageProfiles = new LanguageProfileReader().readAll();
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							//e.printStackTrace();
 						}
 
 						//build language detector:
@@ -267,7 +267,7 @@ public class CimmytWriter
 				}
 				catch(java.lang.IndexOutOfBoundsException e)
 				{
-					e.printStackTrace();
+					//e.printStackTrace();
 					writer.println("\t\t<lang></lang>");
 				}
 				catch(java.lang.Exception e)
@@ -337,7 +337,7 @@ public class CimmytWriter
 						}
 						catch(java.lang.NullPointerException e)
 						{
-							e.printStackTrace();
+							//e.printStackTrace();
 						}
 					}
 				}
@@ -620,7 +620,7 @@ public class CimmytWriter
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{
-				e.printStackTrace();
+				//e.printStackTrace();
 				writer.println("\t\t<value></value><broken></broken>");
 				//writer.println("\t\t<broken>false</broken>");
 			}
@@ -975,6 +975,9 @@ public class CimmytWriter
 		persons=record.getCreator();
 		persons.addAll(record.getContributor());
 		
+		List<CimmytRecord.Subject> subjs=new ArrayList<CimmytRecord.Subject>();
+		subjs=record.getSubject();
+		
 		if(record.getHandler().contains("data.cimmyt"))
 		{
 			CimmytEnrich enricher=new CimmytEnrich();
@@ -982,10 +985,10 @@ public class CimmytWriter
 				persons.addAll(enricher.extractPersonsDVN(record));
 			} catch (XPathExpressionException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
@@ -1081,6 +1084,8 @@ public class CimmytWriter
 				GetConfig config=new GetConfig();
 				int enrich=Integer.valueOf(config.getValue("author_enrich"));
 				
+				int p_enrich=0;
+				
 				if(enrich==1)
 				{
 					person.orcid=freme_enricher.enrichPersons(person.first_name+" "
@@ -1097,6 +1102,44 @@ public class CimmytWriter
 						person.orcid=freme_enricher.enrichPersons(person.first_name+" "
 								+person.last_name);
 					}
+					
+					try
+					{
+						if(person.orcid.isEmpty())
+						{
+							for(int k=0;k<subjs.size();k++)
+							{
+								person.orcid="";
+								person.orcid=freme_enricher.enrichPersons(person.first_name+" "
+										+person.last_name+" "+subjs.get(k).getValue());
+								if(!person.orcid.isEmpty())
+									break;
+							}
+						}
+					}
+					catch(java.lang.NullPointerException e)
+					{
+						for(int k=0;k<subjs.size();k++)
+						{
+							person.orcid="";
+							person.orcid=freme_enricher.enrichPersons(person.first_name+" "
+									+person.last_name+" "+subjs.get(k));
+							if(!person.orcid.isEmpty())
+								break;
+						}
+					}
+					
+					try
+					{
+						if(!person.orcid.isEmpty())
+							p_enrich=1;
+					}
+					catch(java.lang.NullPointerException e)
+					{
+						
+					}
+					
+					record.updateStats(p_enrich);
 				}
 			}
 			catch(java.lang.Exception e)
@@ -1231,20 +1274,36 @@ public class CimmytWriter
 
 			Freme freme_enricher=new Freme();
 			organization.viaf="";
+			
+			GetConfig config=new GetConfig();
+			int enrich = 0;
 			try {
-				organization.viaf=freme_enricher.enrichOrganizations(organization.name);
-			} catch (MalformedURLException e) {
+				enrich = Integer.valueOf(config.getValue("organization_enrich"));
+			} catch (NumberFormatException | IOException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				
-			} catch (ProtocolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e1.printStackTrace();
 			}
 			
+			if(enrich==1)
+			{
+				try {
+					organization.viaf=freme_enricher.enrichOrganizations(organization.name);
+					if(!organization.viaf.isEmpty())
+					{
+						record.updateStats(1);
+					}
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					
+				} catch (ProtocolException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				}
+			}
 			writer.println("<organization>");
 			
 				writer.println("\t<fullName>"+organization.full_name+"</fullName>");
@@ -1315,11 +1374,11 @@ public class CimmytWriter
 				
 				if(enrich==1)
 				{
-					cimmyt_enrich.enrichCollection(collection);
+					cimmyt_enrich.enrichCollection(collection, record);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			/*
 
@@ -1831,7 +1890,7 @@ public class CimmytWriter
 	      return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
 	    }
 	    catch (Exception e) {
-	       e.printStackTrace();
+	       //e.printStackTrace();
 	       return false;
 	    }
 	  }  

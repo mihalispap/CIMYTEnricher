@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.agroknow.cimmyt.CimmytSubject;
+import com.agroknow.cimmyt.utils.Statistics;
 
 
 /**
@@ -154,7 +155,8 @@ import com.agroknow.cimmyt.CimmytSubject;
     "linkToResourceCategory",
     "title",
     "description",
-    "subject"
+    "subject",
+    "stats"
 })
 public class CimmytRecord {
 
@@ -219,6 +221,11 @@ public class CimmytRecord {
     protected List<CimmytRecord.Subject> subject;
 
 
+    private Statistics stats=new Statistics();
+	public void updateStats(int value){stats.update(value);}
+	public int getStats(){return stats.getEnrichments();}
+	
+    
 	public void updateSubject(String s, String v, String u)
 	{
 		for(int i=0;i<this.subject.size();i++)
@@ -274,6 +281,10 @@ public class CimmytRecord {
     	if (location == null) {
     		location = new ArrayList<String>();
         }
+    	
+    	if(location.equals("None") ||
+    			location.equals("Country"))
+    		return;
     	
     	int i;
     	for(i=0;i<location.size();i++)
