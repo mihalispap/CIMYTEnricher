@@ -1749,12 +1749,18 @@ public class CimmytWriter
 			
 			writer.println("\t<aggregation>");
 				
+			try
+			{
 				writer.println("\t\t<shownAt>");
 					writer.println("\t\t\t<value>"+base_url+record.getDomainid().get(0)+
 						"/"+record.getCdocid().get(0)+"</value>");
 					writer.println("\t\t\t<broken>false</broken>");
 				writer.println("\t\t</shownAt>");
-				
+			}
+			catch(java.lang.Exception e)
+			{
+				writer.println("\t\t<shownAt><value></value><broken></broken></shownAt>");
+			}
 				for(int i=0;i<resource_links.size();i++)
 				{
 					int k;
