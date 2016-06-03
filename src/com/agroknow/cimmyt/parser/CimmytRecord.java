@@ -393,6 +393,21 @@ public class CimmytRecord {
     	s.vocabulary=subject.vocabulary;
     	s.score=Double.valueOf(subject.score);
     	
+    	for(int i=0;i<this.subject.size();i++)
+    	{
+    		try
+    		{
+	    		if(this.subject.get(i).getUri().equals(s.uri))
+	    		{
+	    			return;
+	    		}
+    		}
+    		catch(java.lang.Exception e)
+    		{
+    			
+    		}
+    	}
+    	
     	this.subject.add(s);
     	//System.out.println("---ADD---\n"+this.subject.get(this.subject.size()-1).value+"\n-----\n");
     	//this.subject.add(subject);
