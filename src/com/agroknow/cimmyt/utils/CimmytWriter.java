@@ -37,6 +37,7 @@ import com.agroknow.cimmyt.CimmytCollection;
 import com.agroknow.cimmyt.CimmytEnrich;
 import com.agroknow.cimmyt.CimmytOrganization;
 import com.agroknow.cimmyt.CimmytPerson;
+import com.agroknow.cimmyt.external.AGSPARQL;
 import com.agroknow.cimmyt.external.Freme;
 import com.agroknow.cimmyt.parser.CimmytRecord;
 import com.agroknow.cimmyt.parser.CimmytRecordInterface;
@@ -647,17 +648,30 @@ public class CimmytWriter
 						
 						String fao_geo=locations.get(i);
 						
-						if(fao_geo.contains(" "))
-						{
-							//fao_geo.replace(" ", "_");
-							//fao_geo.
-							String[] fao=fao_geo.split(" ");
-							fao_geo=fao[0].toLowerCase()+"_"+fao[1];
-						}
+						GetConfig config=new GetConfig();
+						int enrich;
+						try {
+							enrich = Integer.valueOf(config.getValue("faogeo_enrich"));
 						
-						writer.println("\t\t<uri><![CDATA[http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
-								fao_geo+"]]></uri>");
-						writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
+							if(enrich==1)
+							{						
+								AGSPARQL sparql=new AGSPARQL();
+								String fao_uri=sparql.queryFAOGeo(fao_geo);		
+								
+								if(!fao_uri.isEmpty())
+								{
+									writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
+									writer.println("\t\t<uri><![CDATA["+fao_uri+"]]></uri>");
+								}
+								record.updateStats(1);
+							}
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						}
 					}
 					catch (IndexOutOfBoundsException e) {
 						
@@ -1592,17 +1606,31 @@ public class CimmytWriter
 						
 						String fao_geo=locations.get(i);
 						
-						if(fao_geo.contains(" "))
-						{
-							//fao_geo.replace(" ", "_");
-							//fao_geo.
-							String[] fao=fao_geo.split(" ");
-							fao_geo=fao[0].toLowerCase()+"_"+fao[1];
-						}
+						GetConfig config=new GetConfig();
+						int enrich;
+						try {
+							enrich = Integer.valueOf(config.getValue("faogeo_enrich"));
 						
-						writer.println("\t\t<uri><![CDATA[http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/"+
-								fao_geo+"]]></uri>");
-						writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
+						
+							if(enrich==1)
+							{						
+								AGSPARQL sparql=new AGSPARQL();
+								String fao_uri=sparql.queryFAOGeo(fao_geo);		
+								
+								if(!fao_uri.isEmpty())
+								{
+									writer.println("\t\t<vocabulary>faogeopolitical</vocabulary>");
+									writer.println("\t\t<uri><![CDATA["+fao_uri+"]]></uri>");
+								}
+								record.updateStats(1);
+							}
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						}
 					}
 					catch (IndexOutOfBoundsException e) {
 						
