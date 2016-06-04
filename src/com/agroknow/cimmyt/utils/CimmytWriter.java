@@ -493,7 +493,7 @@ public class CimmytWriter
 				 * 	validate that they are persons!
 				 * */
 				writer.println("\t<contributor>");
-					writer.println("\t\t<value>"+contributors.get(i)+"</value>");
+					writer.println("\t\t<value><![CDATA["+contributors.get(i)+"]]></value>");
 					writer.println("\t\t<id>"+cid+"</id>");
 					writer.println("\t\t<uri>/cimmyt/person/"+cid+"</uri>");
 					writer.println("\t\t<type>person</type>");
@@ -1787,7 +1787,7 @@ public class CimmytWriter
 			}
 			catch(java.lang.Exception e)
 			{
-				writer.println("\t\t<shownAt><value></value><broken></broken></shownAt>");
+				writer.println("\t\t<value></value><broken></broken></shownAt>");
 			}
 				for(int i=0;i<resource_links.size();i++)
 				{
