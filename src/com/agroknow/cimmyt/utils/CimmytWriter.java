@@ -845,7 +845,7 @@ public class CimmytWriter
 				}
 				catch(java.lang.IndexOutOfBoundsException e)
 				{
-					writer.println("\t\t<shownAt><value></value><broken></broken></shownAt>");
+					writer.println("\t\t<value></value><broken></broken></shownAt>");
 				}
 				
 				for(int i=0;i<resource_links.size();i++)
