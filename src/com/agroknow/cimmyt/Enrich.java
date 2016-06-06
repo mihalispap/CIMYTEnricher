@@ -22,6 +22,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 
 import com.agroknow.cimmyt.external.AGSPARQL;
+import com.agroknow.cimmyt.external.DBPedia;
 import com.agroknow.cimmyt.parser.CimmytRecord;
 import com.agroknow.cimmyt.parser.CimmytRecordInterface;
 import com.agroknow.cimmyt.utils.CimmytWriter;
@@ -36,6 +37,12 @@ public class Enrich {
 
 
 		
+		
+		/*DBPedia db=new DBPedia();
+		System.out.println("Output:"+db.queryDBPedia(""));
+		
+		if(true)
+			System.exit(0);*/
 			
 				
 			// TODO Auto-generated method stub

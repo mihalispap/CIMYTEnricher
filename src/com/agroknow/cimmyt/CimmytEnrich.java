@@ -210,7 +210,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.size();j++)
+			for(int j=0;j<value.size() && 1==0;j++)
 			{
 				String toCheck;
 				
@@ -285,7 +285,9 @@ public class CimmytEnrich
 					}
 				}
 				br.close();
-			}for(int j=0;j<value.size();j++)
+			}
+			
+			for(int j=0;j<value.size();j++)
 			{
 				String toCheck;
 				
@@ -321,7 +323,8 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.size();j++)
+			
+			for(int j=0;j<value.size() && 1==0;j++)
 			{
 				String toCheck;
 				
@@ -361,7 +364,8 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.size();j++)
+			
+			for(int j=0;j<value.size() && 1==0;j++)
 			{
 				String toCheck;
 				
