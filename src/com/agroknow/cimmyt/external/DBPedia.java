@@ -29,9 +29,11 @@ public class DBPedia
 					+"PREFIX dbpedia: <http://dbpedia.org/> "
 					+"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
 				+ "	SELECT ?x WHERE { "
-						+"?x foaf:name ?t. "
-						+"FILTER ( regex (str(?t), \"International Maize and Wheat Improvement Center\", \"i\") ) "
-						+"} "
+					//+"?x foaf:name ?t. "
+					//+"FILTER ( regex (str(?t), \"International Maize and Wheat Improvement Center\", \"i\") ) "
+					+"?x <http://dbpedia.org/property/name> ?t. "
+					+"FILTER ( regex (str(?t), \"CIMMYT\", \"i\") ) "
+				+"} "
 						+"LIMIT 100";
 		
 		Query query = QueryFactory.create(sparqlQuery); //s2 = the query above

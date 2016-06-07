@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
@@ -42,8 +43,8 @@ public class Enrich {
 		System.out.println("Output:"+db.queryDBPedia(""));
 		
 		if(true)
-			System.exit(0);*/
-			
+			System.exit(0);
+			*/
 				
 			// TODO Auto-generated method stub
 
@@ -82,7 +83,7 @@ public class Enrich {
 	        {
 	        	if (listOfFiles[i].isFile()) 
 	        	{
-	        		//System.out.println("File " + listOfFiles[i].getName());
+	        		System.out.println("File " + listOfFiles[i].getName());
 	        	} 
 	        	else if (listOfFiles[i].isDirectory()) 
 	        	{
@@ -90,7 +91,20 @@ public class Enrich {
 	            }
 	        }
 	        
-
+	        Arrays.sort(listOfFiles);
+	        System.out.println("Sorted");
+	        for (int i = 0; i < listOfFiles.length; i++) 
+	        {
+	        	if (listOfFiles[i].isFile()) 
+	        	{
+	        		System.out.println("File " + listOfFiles[i].getName());
+	        	} 
+	        	else if (listOfFiles[i].isDirectory()) 
+	        	{
+	        		System.out.println("Directory " + listOfFiles[i].getName());
+	            }
+	        }
+	        
 	        JAXBContext jaxbContext=null;
 	        try {
 				jaxbContext = JAXBContext.newInstance("com.agroknow.cimmyt.parser");
@@ -108,6 +122,7 @@ public class Enrich {
 				e.printStackTrace();
 				System.exit(-1);
 			}
+	        
 	        
 	        for(int i=0;i<listOfFiles.length;i++)
 	        {
@@ -194,7 +209,7 @@ public class Enrich {
 				e.printStackTrace();
 			}
 
-
+			System.out.println("Exited normally, processed:"+listOfFiles.length+"no records!");
 		}
 		
 		
