@@ -17,32 +17,38 @@ public class AGSPARQL
 	{
 		String sparqlQuery;
 		
-		sparqlQuery=""
-				+ "PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>"
-				+ "PREFIX bibo: <http://purl.org/ontology/bibo/>"
-				+ "	SELECT ?uri ?geouri { "
-					+ "?uri skos:prefLabel \""+value+"\"@en ."
-					+ "?uri skos:exactMatch ?geouri."
-					+ "FILTER regex(str(?geouri), \"geopolitical\")"
-				+ "}";
-		
-		Query query = QueryFactory.create(sparqlQuery); //s2 = the query above
-		//QueryExecution qExe = QueryExecutionFactory.sparqlService( "http://dbpedia.org/sparql", query );
-		QueryExecution qExe = QueryExecutionFactory.sparqlService(
-					"http://202.45.139.84:10035/catalogs/fao/repositories/agrovoc", query 
-				);
-		
-		
-		ResultSet results = qExe.execSelect();
-		while(results.hasNext())
-	    {
-	        QuerySolution sol = results.nextSolution();
-	        RDFNode geouri = sol.get("geouri"); 
-
-	        return geouri.toString();
-	        //System.out.println("geouri:"+geouri);
-	    }
-		
+		try
+		{
+			sparqlQuery=""
+					+ "PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>"
+					+ "PREFIX bibo: <http://purl.org/ontology/bibo/>"
+					+ "	SELECT ?uri ?geouri { "
+						+ "?uri skos:prefLabel \""+value+"\"@en ."
+						+ "?uri skos:exactMatch ?geouri."
+						+ "FILTER regex(str(?geouri), \"geopolitical\")"
+					+ "}";
+			
+			Query query = QueryFactory.create(sparqlQuery); //s2 = the query above
+			//QueryExecution qExe = QueryExecutionFactory.sparqlService( "http://dbpedia.org/sparql", query );
+			QueryExecution qExe = QueryExecutionFactory.sparqlService(
+						"http://202.45.139.84:10035/catalogs/fao/repositories/agrovoc", query 
+					);
+			
+			
+			ResultSet results = qExe.execSelect();
+			while(results.hasNext())
+		    {
+		        QuerySolution sol = results.nextSolution();
+		        RDFNode geouri = sol.get("geouri"); 
+	
+		        return geouri.toString();
+		        //System.out.println("geouri:"+geouri);
+		    }
+		}
+		catch(java.lang.Exception e)
+		{
+			e.printStackTrace();
+		}
 		return "";
 	}
 }

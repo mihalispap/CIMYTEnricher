@@ -1838,6 +1838,7 @@ public class CimmytEnrich
 		if(enrich!=1)
 			return;
 		
+		
 		String domain_id=record.getDomainid().get(0);
 		String doc_id=record.getCdocid().get(0);
 		
