@@ -1222,6 +1222,7 @@ public class CimmytEnrich
         record.updateStats(no_enrich);
 	}
 
+	
 	public String extractKindOfData(CimmytRecord record) throws Exception
 	{
 		int no_enrich=0;

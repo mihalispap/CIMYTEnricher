@@ -90,10 +90,10 @@ public class Enrich {
 	        		System.out.println("Directory " + listOfFiles[i].getName());
 	            }
 	        }
-	        
+
 	        Arrays.sort(listOfFiles);
 	        System.out.println("Sorted");
-	        for (int i = 0; i < listOfFiles.length; i++) 
+	        for (int i = listOfFiles.length-1; i >=0; i--) 
 	        {
 	        	if (listOfFiles[i].isFile()) 
 	        	{
@@ -124,7 +124,7 @@ public class Enrich {
 			}
 	        
 	        
-	        for(int i=0;i<listOfFiles.length;i++)
+	        for (int i = listOfFiles.length-1; i >=0; i--)
 	        {
 	        	JAXBElement<CimmytRecord> record;
 	    		try {
@@ -132,7 +132,7 @@ public class Enrich {
 	    			record = (JAXBElement<CimmytRecord>) 
 	    						unmarshaller.unmarshal(new File(listOfFiles[i].getAbsolutePath()));
 	    			
-	    			//System.out.println(listOfFiles[i].getAbsolutePath());
+	    			//System.out.println("About to process:"+listOfFiles[i].getAbsolutePath());
 	    			CimmytRecord crec = (CimmytRecord) record.getValue();
 	    			
 	    			//System.out.println(crec.toString());
@@ -168,7 +168,7 @@ public class Enrich {
 	        JAXBElement<?> fhElement;
 			try {
 				
-				for(int i=0;i<listOfFiles.length;i++)
+				for(int i=listOfFiles.length-1;i>=0;i--)
 				{
 				
 					fhElement = (JAXBElement<?>)u.unmarshal(new FileInputStream(listOfFiles[i].getAbsolutePath()));

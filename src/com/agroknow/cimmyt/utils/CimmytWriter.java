@@ -1901,10 +1901,21 @@ public class CimmytWriter
 				writer.println("\t</collection>");
 			}
 			
-			if(collections.size()==0)
+			if(collections.size()==0 && record.getSetid().isEmpty())
+			{
 				writer.println("\t<collection><id></id><uri></uri><type></type></collection>");
-			
-			
+			}
+			else if(collections.size()==0 && !record.getSetid().isEmpty())
+			{
+				for(int i=0;i<record.getSetid().size();i++)
+				{
+		           	writer.println("\t<collection>"
+		           			+ "			<id>"+record.getSetid().get(i)+"</id>"
+		           					+ "	<uri>/cimmyt/collection/"+record.getSetid().get(i)+"</uri>"
+		           					+ " <type>collection</type>"
+		           					+"</collection>");				
+				}
+			}
 		writer.println("</dataset_software>");
 		writer.close();
 	}
