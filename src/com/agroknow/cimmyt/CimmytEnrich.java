@@ -169,88 +169,8 @@ public class CimmytEnrich
 			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
 					+ "assets"+System.getProperty("file.separator");
 			
+			
 			for(int j=0;j<value.size();j++)
-			{
-				String toCheck;
-				
-				toCheck=value.get(j).replace(",", "");
-				toCheck=value.get(j).replace("(", "");
-				toCheck=value.get(j).replace(")", "");
-				
-				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
-				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-	
-				String strLine;
-				while ((strLine = br.readLine()) != null && 1==0)   
-				{
-	
-					String[] geonames=strLine.split("\t");
-				  
-					boolean found=false;
-					String geonames_id="";
-
-					if(toCheck.equalsIgnoreCase(geonames[1]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					else if(toCheck.equalsIgnoreCase(geonames[2]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					if(found)
-					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						
-						no_geoenrich++;
-						break;
-					}
-				}
-				br.close();
-			}
-			for(int j=0;j<value.size() && 1==0;j++)
-			{
-				String toCheck;
-				
-				toCheck=value.get(j).replace(",", "");
-				toCheck=value.get(j).replace("(", "");
-				toCheck=value.get(j).replace(")", "");
-				
-				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
-				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-	
-				String strLine;
-				while ((strLine = br.readLine()) != null)   
-				{
-	
-					String[] geonames=strLine.split("\t");
-				  
-					boolean found=false;
-					String geonames_id="";
-					
-					if(toCheck.equalsIgnoreCase(geonames[1]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					else if(toCheck.equalsIgnoreCase(geonames[2]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					if(found)
-					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						
-						no_geoenrich++;
-						break;
-					}
-				}
-				br.close();
-			}for(int j=0;j<value.size();j++)
 			{
 				String toCheck;
 				
@@ -324,6 +244,90 @@ public class CimmytEnrich
 				br.close();
 			}
 			
+
+			for(int j=0;j<value.size() && 1==0;j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null && 1==0)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					else if(toCheck.equalsIgnoreCase(geonames[2]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			for(int j=0;j<value.size() && 1==0;j++)
+			{
+				String toCheck;
+				
+				toCheck=value.get(j).replace(",", "");
+				toCheck=value.get(j).replace("(", "");
+				toCheck=value.get(j).replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					else if(toCheck.equalsIgnoreCase(geonames[2]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			
 			for(int j=0;j<value.size() && 1==0;j++)
 			{
 				String toCheck;
@@ -402,162 +406,7 @@ public class CimmytEnrich
 				br.close();
 			}
 		}
-
-		
-		/*if(true)
-			return;
-		
-		for(int i=0;i<record.getPlace().size();i++)
-		{
-		
-			List<String> value = new ArrayList<String>();//
-			value=record.getRegion();
-			
-			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
-					+ "assets"+System.getProperty("file.separator");
-			
-			for(int j=0;j<value.size();j++)
-			{
-				String toCheck;
-				
-				toCheck=value.get(j).replace(",", "");
-				toCheck=value.get(j).replace("(", "");
-				toCheck=value.get(j).replace(")", "");
-				
-				FileInputStream fstream = new FileInputStream(absolute_path+"cities1000.txt");
-				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 	
-				String strLine;
-				while ((strLine = br.readLine()) != null)   
-				{
-	
-					String[] geonames=strLine.split("\t");
-				  
-					boolean found=false;
-					String geonames_id="";
-					
-					if(toCheck.equalsIgnoreCase(geonames[1]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					if(found)
-					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						break;
-					}
-				}
-				br.close();
-			}
-			for(int j=0;j<value.size();j++)
-			{
-				String toCheck;
-				
-				toCheck=value.get(j).replace(",", "");
-				toCheck=value.get(j).replace("(", "");
-				toCheck=value.get(j).replace(")", "");
-				
-				FileInputStream fstream = new FileInputStream(absolute_path+"cities15000.txt");
-				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-	
-				String strLine;
-				while ((strLine = br.readLine()) != null)   
-				{
-	
-					String[] geonames=strLine.split("\t");
-				  
-					boolean found=false;
-					String geonames_id="";
-					
-					if(toCheck.equalsIgnoreCase(geonames[1]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					if(found)
-					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						break;
-					}
-				}
-				br.close();
-			}
-			for(int j=0;j<value.size();j++)
-			{
-				String toCheck;
-				
-				toCheck=value.get(j).replace(",", "");
-				toCheck=value.get(j).replace("(", "");
-				toCheck=value.get(j).replace(")", "");
-				
-				FileInputStream fstream = new FileInputStream(absolute_path+"cities5000.txt");
-				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-	
-				String strLine;
-				while ((strLine = br.readLine()) != null)   
-				{
-	
-					String[] geonames=strLine.split("\t");
-				  
-					boolean found=false;
-					String geonames_id="";
-					
-					if(toCheck.equalsIgnoreCase(geonames[1]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					if(found)
-					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						break;
-					}
-				}
-				br.close();
-			}
-			for(int j=0;j<value.size();j++)
-			{
-				String toCheck;
-				
-				toCheck=value.get(j).replace(",", "");
-				toCheck=value.get(j).replace("(", "");
-				toCheck=value.get(j).replace(")", "");
-				
-				FileInputStream fstream = new FileInputStream(absolute_path+"null.txt");
-				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-	
-				String strLine;
-				while ((strLine = br.readLine()) != null)   
-				{
-	
-					String[] geonames=strLine.split("\t");
-				  
-					boolean found=false;
-					String geonames_id="";
-					
-					if(toCheck.equalsIgnoreCase(geonames[1]))
-					{
-							found=true;
-							geonames_id=geonames[0];
-					}
-					if(found)
-					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						break;
-					}
-				}
-				br.close();
-			}
-		}
-		
-		if(true)
-			return;
-		*/
-		
 
 		for(int i=0;i<record.getDescription().size();i++)
 		{
@@ -567,7 +416,84 @@ public class CimmytEnrich
 			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
 					+ "assets"+System.getProperty("file.separator");
 			
+
 			for(int j=0;j<value.length;j++)
+			{
+				String toCheck;
+				
+				toCheck=value[j].replace(",", "");
+				toCheck=value[j].replace("(", "");
+				toCheck=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"countries.db");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[4]))
+					{
+							found=true;
+							geonames_id=geonames[16];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			
+			for(int j=0;j<value.length;j++)
+			{
+				String toCheck;
+				
+				toCheck=value[j].replace(",", "");
+				toCheck=value[j].replace("(", "");
+				toCheck=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"continents.db");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			
+
+			
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -601,7 +527,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -635,7 +561,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -669,7 +595,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -705,15 +631,93 @@ public class CimmytEnrich
 			}
 		}
 
-		for(int i=0;i<record.getTitle().size();i++)
+		for(int i=0;i<record.getTitle().size() ;i++)
 		{
 		
-			String[] value=record.getDescription().get(i).getValue().split(" ");
+			String[] value=record.getTitle().get(i).getValue().split(" ");
 			
 			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
 					+ "assets"+System.getProperty("file.separator");
 			
+
 			for(int j=0;j<value.length;j++)
+			{
+				String toCheck;
+				
+				toCheck=value[j].replace(",", "");
+				toCheck=value[j].replace("(", "");
+				toCheck=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"countries.db");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[4]))
+					{
+							found=true;
+							geonames_id=geonames[16];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			
+			for(int j=0;j<value.length;j++)
+			{
+				String toCheck;
+				
+				toCheck=value[j].replace(",", "");
+				toCheck=value[j].replace("(", "");
+				toCheck=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"continents.db");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			
+
+			
+			
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -747,7 +751,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -781,7 +785,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -815,7 +819,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -851,7 +855,7 @@ public class CimmytEnrich
 			}
 		}
 		
-		for(int i=0;i<record.getSubject().size();i++)
+		for(int i=0;i<record.getSubject().size() ;i++)
 		{
 		
 			String[] value=record.getSubject().get(i).getValue().split(" ");
@@ -859,7 +863,85 @@ public class CimmytEnrich
 			String absolute_path=System.getProperty("user.dir")+System.getProperty("file.separator")+""
 					+ "assets"+System.getProperty("file.separator");
 			
+			
+
 			for(int j=0;j<value.length;j++)
+			{
+				String toCheck;
+				
+				toCheck=value[j].replace(",", "");
+				toCheck=value[j].replace("(", "");
+				toCheck=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"countries.db");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[4]))
+					{
+							found=true;
+							geonames_id=geonames[16];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			
+			for(int j=0;j<value.length;j++)
+			{
+				String toCheck;
+				
+				toCheck=value[j].replace(",", "");
+				toCheck=value[j].replace("(", "");
+				toCheck=value[j].replace(")", "");
+				
+				FileInputStream fstream = new FileInputStream(absolute_path+"continents.db");
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	
+				String strLine;
+				while ((strLine = br.readLine()) != null)   
+				{
+	
+					String[] geonames=strLine.split("\t");
+				  
+					boolean found=false;
+					String geonames_id="";
+					
+					if(toCheck.equalsIgnoreCase(geonames[1]))
+					{
+							found=true;
+							geonames_id=geonames[0];
+					}
+					if(found)
+					{
+						record.addLocation(toCheck);
+						record.addGeonames("http://sws.geonames.org/"+geonames_id);
+						
+						no_geoenrich++;
+						break;
+					}
+				}
+				br.close();
+			}
+			
+
+			
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -893,7 +975,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -927,7 +1009,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
@@ -961,7 +1043,7 @@ public class CimmytEnrich
 				}
 				br.close();
 			}
-			for(int j=0;j<value.length;j++)
+			for(int j=0;j<value.length && 1==0;j++)
 			{
 				value[j]=value[j].replace(",", "");
 				value[j]=value[j].replace("(", "");
