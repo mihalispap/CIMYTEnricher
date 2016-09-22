@@ -444,11 +444,14 @@ public class CimmytEnrich
 					}
 					if(found)
 					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						
-						no_geoenrich++;
-						break;
+						if(!geonames_id.equals("geonameid"))
+						{
+							record.addLocation(toCheck);
+							record.addGeonames("http://sws.geonames.org/"+geonames_id);
+							
+							no_geoenrich++;
+							break;
+						}
 					}
 				}
 				br.close();
@@ -667,11 +670,14 @@ public class CimmytEnrich
 					}
 					if(found)
 					{
-						record.addLocation(toCheck);
-						record.addGeonames("http://sws.geonames.org/"+geonames_id);
-						
-						no_geoenrich++;
-						break;
+						if(!geonames_id.equals("geonameid"))
+						{
+							record.addLocation(toCheck);
+							record.addGeonames("http://sws.geonames.org/"+geonames_id);
+							
+							no_geoenrich++;
+							break;
+						}
 					}
 				}
 				br.close();
