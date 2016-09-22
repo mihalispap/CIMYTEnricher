@@ -46,7 +46,8 @@ public class Freme
 			return null;
 		}
 		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
+		//connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
+		connection.setRequestProperty("Content-Type", "text/n3;charset=UTF-8");
 		
 		BufferedReader streamReader;
 		try {
@@ -216,7 +217,8 @@ public class Freme
 			return "";
 		}
 		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
+		//connection.setRequestProperty("Content-Type", "application/ld+json;charset=UTF-8");
+				connection.setRequestProperty("Content-Type", "text/n3;charset=UTF-8");
 		
 		BufferedReader streamReader;
 		try {

@@ -230,7 +230,7 @@ public class CimmytEnrich
 					if(toCheck.equalsIgnoreCase(geonames[1]))
 					{
 							found=true;
-							geonames_id=geonames[0];
+							geonames_id=geonames[2];
 					}
 					if(found)
 					{
@@ -477,7 +477,7 @@ public class CimmytEnrich
 					if(toCheck.equalsIgnoreCase(geonames[1]))
 					{
 							found=true;
-							geonames_id=geonames[0];
+							geonames_id=geonames[2];
 					}
 					if(found)
 					{
@@ -700,7 +700,7 @@ public class CimmytEnrich
 					if(toCheck.equalsIgnoreCase(geonames[1]))
 					{
 							found=true;
-							geonames_id=geonames[0];
+							geonames_id=geonames[2];
 					}
 					if(found)
 					{
@@ -925,7 +925,7 @@ public class CimmytEnrich
 					if(toCheck.equalsIgnoreCase(geonames[1]))
 					{
 							found=true;
-							geonames_id=geonames[0];
+							geonames_id=geonames[2];
 					}
 					if(found)
 					{
